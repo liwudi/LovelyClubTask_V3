@@ -1,0 +1,8 @@
+.textArea{
+    width: 100%;
+    height: 200px;
+    border: none;
+    outline: none;
+    padding: 10px;
+    font-size: inherit;
+}

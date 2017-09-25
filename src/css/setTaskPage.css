@@ -1,0 +1,11 @@
+.buttonContainer{
+    width: 100%;
+    height: 100px;
+}
+.bigBtn{
+    width: 80%;
+    height: 50px;
+    border-radius: 25px;
+    color: white;
+    border: none;
+}

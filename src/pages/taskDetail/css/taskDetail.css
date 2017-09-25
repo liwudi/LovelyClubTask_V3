@@ -1,0 +1,16 @@
+.img{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+.title{
+    text-align: center;
+}
+.list{
+
+}
+.itemLeft{
+    width: 50px;
+    display: flex;
+    justify-content: center;
+}
