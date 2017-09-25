@@ -1,6 +1,9 @@
 /**
  * Created by mapbar_front on 2017/9/6.
  */
+import serverConfig from '../../config';
+const serviceUrl = serverConfig.server.main_url;
+
 import React,{ Component } from 'react';
 import { BrowserRouter as Router, Link, Route} from 'react-router-dom';
 import '../../css/common.css';
@@ -73,10 +76,10 @@ export default class TaskDetail extends Component{
     }
     render(){
         return (
-            <div className="pageBox">
+            <div className="pageBox boxSizing">
                 <TopBanner title="作业详情" router={this.props.history} />
-                <div className="fx1 bgWhite borderTop" style={{overflow:'auto'}}>
-                    <div className="detail">
+                <div className="fx1 bgWhite borderTop boxSizing" style={{overflow:'auto'}}>
+                    <div className="detail boxSizing">
                         <div className='center marginTop'>
                             <img className="img" src={require("../../assets/images/TaskDetail.jpg")} />
                         </div>
@@ -87,78 +90,104 @@ export default class TaskDetail extends Component{
                         >
                             {this.state.taskContent||'任务内容'}
                         </div>
+
+                    </div>
+                    <div className="taskPic boxSizing">
+                        {
+                            this.state.taskPicsList.map((item,index) => {
+                                return (
+                                    <div key={index} className="taskImgBox boxSizing padding">
+                                        <img
+                                            className="imgDefault boxSizing"
+                                            src={serviceUrl + "/task/showImg?path=c:/ttzyimgs/alarm.png"}
+                                            alt="作业图片展示"
+                                        />
+                                    </div>
+                                )
+
+                            })
+                        }
+
+                    </div>
+                    <div className="taskVoice boxSizing">
+
+                        {
+                            this.state.taskVoiceList.map((item,index) => {
+                                return (
+                                    <audio key={index} className="voiceBox marginTop" controls>
+                                        <source src={serviceUrl + item.fullPath} type="audio/mpeg" />
+                                    </audio>
+                                )
+                            })
+                        }
                     </div>
                     <div className="note smallSize center padding" style={{backgroundColor:'#f1f1f1'}}>
                         ---- {this.state.compoleteNumber ? this.state.compoleteNumber+"人提交":"暂无提交"} ----
                     </div>
-                    <img src="http://homework.shsoapp.com:8888/ttzyservice/task/showImg?path=/Users/caochunpeng/temp/alarm.png"/>
+
+                    <div className="list boxSizing padding">
                     {
-                        this.state.taskPicsList.map((item,index)=>{
-                            
-                        })
-                    }
-                    {
-                        this.state.numberLis && this.state.numberList.map((item,index)=>{
+                        this.state.numberList.map((item,index) => {
                             return (
-                                <div key={index} className="list padding">
-                                    <div className="item disFx borderBottom paddingBottom">
-                                        <div className="itemLeft">
-                                            <img src={item.imageUrl} style={{width:'30px',height:'30px',borderRadius:'50%'}}/>
+                                <div key={index} className="item disFx boxSizing borderBottom paddingBottom paddingTop">
+                                    <div className="itemLeft">
+                                        <img src={item.imageUrl || require('../../assets/images/TaskDetail.jpg')} style={{width:'30px',height:'30px',borderRadius:'50%'}}/>
+                                    </div>
+                                    <div className="itemRight fx1">
+                                        <div className="disFx">
+                                            <div className="fx1">
+                                                <p className="colorNote1 baseSize">{item.title||'山花烂漫时'}</p>
+                                                <p className="colorNote smallSize">{item.time||'2017-09-23 12:02:23'}</p>
+                                            </div>
+                                            <div onClick={()=>{this.setState({isShowDelete:true,currentDeleteIndex:index})}} className="bigSize marginRight">...</div>
                                         </div>
-                                        <div className="itemRight fx1">
-                                            <div className="disFx">
-                                                <div className="fx1">
-                                                    <p className="colorNote1 baseSize">{item.title}</p>
-                                                    <p className="colorNote smallSize">{item.time}</p>
-                                            </div>
-                                                <div onClick={()=>{this.setState({isShowDelete:true,currentDeleteIndex:index})}} className="bigSize marginRight">...</div>
-                                            </div>
-                                            <p className="marginTop">{item.content}</p>
-                                            <div>
+                                        <p className="marginTop">{item.content}</p>
+                                        <div>
 
-                                            </div>
-                                            <div className="taskImages disFx marginTop">
-                                                {
-                                                    item.taskImage.map((i,idx)=>{
-                                                        return (
-                                                            <img
-                                                                key={idx}
-                                                                className="marginRight"
-                                                                style={{width:'70px',height:'70px'}}
-                                                                src={i}
-                                                            />
-                                                        )
-                                                    })
-                                                }
-
-                                            </div>
-                                            <div className="padding disFx">
-                                                <div className="rowCenter" style={{width:'100%',height:'40px',overflow:'hidden'}}>
-                                                    <img onClick={()=>this.setState({isSpeak:true})} src={require("../../assets/images/comments.png")} className="iconDefault" /><span onClick={()=>this.setState({isSpeak:true})} className="marginLeft">点评</span>
-                                                </div>
-                                                <div className="rowCenter" style={{width:'100%',height:'40px',overflow:'hidden'}}>
-                                                    <img src={require("../../assets/images/pramise.png")}  className="iconDefault" /><span className="marginLeft">3</span>
-                                                </div>
-                                            </div>
+                                        </div>
+                                        <div className="theImages boxSizing disFx marginTop">
                                             {
-                                                item.comments.map((item,idx)=>{
+                                                item.taskPicsList.map((i,idx)=>{
                                                     return (
-                                                        <div key={idx} className="border marginRight">
-                                                            <p className="padding margin">
-                                                                <span>{item.name}:</span>
-                                                                <span>{item.content}</span>
-                                                            </p>
-                                                        </div>
+                                                        <img
+                                                            key={idx}
+                                                            className="marginRight marginButtom"
+                                                            style={{width:'70px',height:'70px'}}
+                                                            src={serviceUrl + i.fullPath}
+                                                        />
                                                     )
                                                 })
                                             }
 
                                         </div>
+                                        <div className="padding disFx">
+                                            <div className="rowCenter" style={{width:'100%',height:'40px',overflow:'hidden'}}>
+                                                <img onClick={()=>this.setState({isSpeak:true})} src={require("../../assets/images/comments.png")} className="iconDefault" /><span onClick={()=>this.setState({isSpeak:true})} className="marginLeft">点评</span>
+                                            </div>
+                                            <div className="rowCenter" style={{width:'100%',height:'40px',overflow:'hidden'}}>
+                                                <img src={require("../../assets/images/pramise.png")}  className="iconDefault" /><span className="marginLeft">3</span>
+                                            </div>
+                                        </div>
+                                        {
+                                            item.commentList.map((item,idx)=>{
+                                                return (
+                                                    <div key={idx} className="border marginRight">
+                                                        <p className="padding margin">
+                                                            <span>{item.name}:</span>
+                                                            <span>{item.content}</span>
+                                                        </p>
+                                                    </div>
+                                                )
+                                            })
+                                        }
+
                                     </div>
                                 </div>
                             )
                         })
                     }
+                    </div>
+
 
 
                 </div>

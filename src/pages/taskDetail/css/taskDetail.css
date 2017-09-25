@@ -14,3 +14,31 @@
     display: flex;
     justify-content: center;
 }
+.taskPic{
+    display: flex;
+    flex-wrap: wrap;
+}
+.taskImgBox{
+    width: 33%;
+    height: 120px;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+}
+.theImages{
+    width: 100%;
+    height: auto;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+}
+.imgDefault{
+    width: 100%;
+    height:100%;
+}
+.voiceBox{
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #cccccc;
+}
+.boxSizing{
+    box-sizing: border-box;
+}

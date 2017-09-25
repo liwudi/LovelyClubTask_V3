@@ -20,7 +20,7 @@ export default class Main extends Component{
         return(
 
             <Router history={history}>
-                <div className="disFx fx1" style={{width:"100%",height:'100%'}}>
+                <div className="disFx boxSizing" style={{width:"100%",height:'100%',overflow:'hidden'}}>
                     <Switch>
 
                         <Route path="/home" component={HomePage}/>
