@@ -205,3 +205,120 @@ export function saveTaskFinished(content,taskSubjectId,userId) {
     })
 }
 
+export function updateTaskFinished(content,id) {
+    return new Promise((resolve,reject) => {
+        ajax({
+            url:makeUrl('/task/updateTaskFinished'),
+            data:{
+                content,
+                id
+            },
+            method:'POST',
+            success:function (res) {
+                resolve(res);
+            },
+            fail:function (err) {
+                reject(err);
+            }
+
+        })
+    })
+}
+
+export function deleteTaskFinished(finishedId) {
+    return new Promise((resolve,reject) => {
+        ajax({
+            url:makeUrl('/task/deleteTaskFinished'),
+            data:{
+                finishedId
+            },
+            method:'POST',
+            success:function (res) {
+                resolve(res);
+            },
+            fail:function (err) {
+                reject(err);
+            }
+
+        })
+    })
+}
+
+export function saveFinishedComment(content,taskFinishedId) {
+    return new Promise((resolve,reject) => {
+        ajax({
+            url:makeUrl('/task/saveFinishedComment?'),
+            data:{
+                content,
+                taskFinishedId
+            },
+            method:'POST',
+            success:function (res) {
+                resolve(res);
+            },
+            fail:function (err) {
+                reject(err);
+            }
+
+        })
+    })
+}
+
+export function deleteFinishedComment(id) {
+    return new Promise((resolve,reject) => {
+        ajax({
+            url:makeUrl('/task/deleteFinishedComment'),
+            data:{
+                id
+            },
+            method:'POST',
+            success:function (res) {
+                resolve(res);
+            },
+            fail:function (err) {
+                reject(err);
+            }
+
+        })
+    })
+}
+
+export function saveFinishedPraise(taskFinishedId,userId) {
+    return new Promise((resolve,reject) => {
+        ajax({
+            url:makeUrl('/task/saveFinishedPraise'),
+            data:{
+                taskFinishedId,
+                userId
+            },
+            method:'POST',
+            success:function (res) {
+                resolve(res);
+            },
+            fail:function (err) {
+                reject(err);
+            }
+
+        })
+    })
+}
+
+
+export function deleteFinishedPraise(id) {
+    return new Promise((resolve,reject) => {
+        ajax({
+            url:makeUrl('/task/deleteFinishedPraise'),
+            data:{
+                id
+            },
+            method:'POST',
+            success:function (res) {
+                resolve(res);
+            },
+            fail:function (err) {
+                reject(err);
+            }
+
+        })
+    })
+}

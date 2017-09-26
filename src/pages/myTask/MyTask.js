@@ -28,7 +28,7 @@ export default class TaskDetail extends Component{
         })
     }
     componentDidMount(){
-        this.fetchData();
+        //this.fetchData();
     }
     render(){
         return (

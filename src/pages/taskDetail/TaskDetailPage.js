@@ -18,13 +18,14 @@ export default class TaskDetail extends Component{
     constructor(props){
         super(props);
         this.state = {
-            taskTitle:'',
-            taskContent:'',
-            compoleteNumber:3,
-            numberList:[],
+            taskTitle:'',//作业标题
+            taskContent:'',//作业内容
+            compoleteNumber:0,
+            numberList:[],//成员列表
             taskPicsList:[],
             taskVoiceList:[],
-            isShowDelete:false
+            isShowDelete:false,
+            currentPageIndex:1
         }
     }
     deleteEvent(){
@@ -33,26 +34,33 @@ export default class TaskDetail extends Component{
 
         this.setState({numberList:arr,isShowDelete:false});
     }
-    fetchData(){
+    fetchMoreDate(){
+        this.setState({
+            currentPageIndex: this.state.currentPageIndex + 1
+        },()=>{
+            this.fetchData(this.state.currentPageIndex);
+        });
+
+    }
+    fetchData(pageNumber = 1,rowsNumber = 10){
         let taskSubjectId = this.props.match.params.id;
-        let page = 1;
-        let rows = 10;
+        let page = pageNumber;
+        let rows = rowsNumber;
         getTaskFinishedList(taskSubjectId,page,rows).then(res => {
             res = JSON.parse(res);
             console.log('getTaskFinishedList',res);
             this.setState({
                 compoleteNumber:res.total,
                 numberList:res.rows
+            })
+        });
+        findTaskFinishedById(taskSubjectId).then(res => {
+            res = JSON.parse(res);
+            console.log('findTaskFinishedById',res);
+            this.setState({
 
             })
         });
-        // findTaskFinishedById(taskSubjectId).then(res => {
-        //     res = JSON.parse(res);
-        //     console.log('findTaskFinishedById',res);
-        //     this.setState({
-        //
-        //     })
-        // });
         findTaskSubjectById(taskSubjectId).then(res => {
             res = JSON.parse(res);
             console.log('findTaskSubjectById',res);
@@ -171,7 +179,7 @@ export default class TaskDetail extends Component{
                                             {
                                                 item.taskVoiceList.map((every,idx) => {
                                                     return (
-                                                        <audio key={idx} className="voiceBox marginTop" controls>
+                                                        <audio loop={idx==1?true:false} autoPlay={idx==1?true:false} key={idx} className="voiceBox marginTop" controls>
                                                             <source src={serviceUrl + every.fullPath} type="audio/mpeg" />
                                                         </audio>
                                                     )
@@ -183,7 +191,7 @@ export default class TaskDetail extends Component{
                                                 <img onClick={()=>this.setState({isSpeak:true})} src={require("../../assets/images/comments.png")} className="iconDefault" /><span onClick={()=>this.setState({isSpeak:true})} className="marginLeft">点评</span>
                                             </div>
                                             <div className="rowCenter" style={{width:'100%',height:'40px',overflow:'hidden'}}>
-                                                <img src={require("../../assets/images/pramise.png")}  className="iconDefault" /><span className="marginLeft">3</span>
+                                                <img src={require("../../assets/images/pramise.png")}  className="iconDefault" /><span className="marginLeft">{item.praiseCount}</span>
                                             </div>
                                         </div>
                                         {
@@ -205,7 +213,7 @@ export default class TaskDetail extends Component{
                         })
                     }
                     </div>
-
+                    <div onClick={() => this.fetchMoreDate()} className="padding center colorMain marginButtom">查看更多</div>
 
 
                 </div>
@@ -229,3 +237,4 @@ export default class TaskDetail extends Component{
         )
     }
 }
+
