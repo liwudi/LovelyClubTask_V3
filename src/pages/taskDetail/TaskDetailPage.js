@@ -12,14 +12,14 @@ import TopBanner from '../../components/TopBanner';
 import ViewForRightDom from '../../components/ViewForRightDom';
 import Modal2 from '../../components/Modal2';
 
-import { getTaskFinishedList,findTaskSubjectById } from '../../services/AppServices';
+import { getTaskFinishedList,findTaskSubjectById,findTaskFinishedById } from '../../services/AppServices';
 import { deleteItemByIndex } from '../../assets/utils/utils';
 export default class TaskDetail extends Component{
     constructor(props){
         super(props);
         this.state = {
-            taskTitle:'数学',
-            taskContent:'我是一个小逗比，咿呀咿呀咦！！',
+            taskTitle:'',
+            taskContent:'',
             compoleteNumber:3,
             numberList:[],
             taskPicsList:[],
@@ -46,6 +46,13 @@ export default class TaskDetail extends Component{
 
             })
         });
+        // findTaskFinishedById(taskSubjectId).then(res => {
+        //     res = JSON.parse(res);
+        //     console.log('findTaskFinishedById',res);
+        //     this.setState({
+        //
+        //     })
+        // });
         findTaskSubjectById(taskSubjectId).then(res => {
             res = JSON.parse(res);
             console.log('findTaskSubjectById',res);
@@ -99,7 +106,7 @@ export default class TaskDetail extends Component{
                                     <div key={index} className="taskImgBox boxSizing padding">
                                         <img
                                             className="imgDefault boxSizing"
-                                            src={serviceUrl + "/task/showImg?path=c:/ttzyimgs/alarm.png"}
+                                            src={serviceUrl + item.fullPath}
                                             alt="作业图片展示"
                                         />
                                     </div>
@@ -159,6 +166,17 @@ export default class TaskDetail extends Component{
                                                 })
                                             }
 
+                                        </div>
+                                        <div className="">
+                                            {
+                                                item.taskVoiceList.map((every,idx) => {
+                                                    return (
+                                                        <audio key={idx} className="voiceBox marginTop" controls>
+                                                            <source src={serviceUrl + every.fullPath} type="audio/mpeg" />
+                                                        </audio>
+                                                    )
+                                                })
+                                            }
                                         </div>
                                         <div className="padding disFx">
                                             <div className="rowCenter" style={{width:'100%',height:'40px',overflow:'hidden'}}>
