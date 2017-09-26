@@ -135,7 +135,7 @@ class SetTaskPage extends Component{
         const _rightView =  () => {
             return (
                 <div className="rowCenter">
-                    <span className="note">{this.props.taskStore.taskTitle || this.state.taskTitle || '请输入标题'}</span>
+                    <span className="note textAlign one-line">{this.props.taskStore.taskTitle || this.state.taskTitle || '请输入标题'}</span>
                     <img className="iconRightArrow" src={require("../../assets/images/rightArrow.png")} />
                 </div>
             )
@@ -144,7 +144,7 @@ class SetTaskPage extends Component{
         const _rightViewContent = () => {
             return (
                 <div className="rowCenter">
-                    <span className="note">{this.props.taskStore.taskContent || this.state.taskContent || '请输入内容'}</span>
+                    <span className="note textAlign one-line">{this.props.taskStore.taskContent || this.state.taskContent || '请输入内容'}</span>
                     <img className="iconRightArrow" src={require("../../assets/images/rightArrow.png")} />
                 </div>
             )
@@ -162,7 +162,7 @@ class SetTaskPage extends Component{
                         />
                         <ViewForRightArrow
                             title='作业内容'
-                            onClick={()=>{this.props.history.push('/taskContent')}}
+                            onClick={()=>{this.props.history.push(`/taskContent/${false}`)}}
                             rightView={()=>_rightViewContent()}
                             style={{justifyContent:'space-between'}}
                         />

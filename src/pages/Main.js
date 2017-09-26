@@ -26,7 +26,7 @@ export default class Main extends Component{
                         <Route path="/home" component={HomePage}/>
 
                         <Route path="/setTaskPage/:isEditPage" component={SetTaskPage} />
-                        <Route path="/taskContent" component={TaskContent} />
+                        <Route path="/taskContent/:taskSubjectId" component={TaskContent} />
                         <Route path="/relatedCourses" component={RelatedCoursePage} />
                         <Route path="/taskCard" component={TaskCardPage} />
                         <Route path="/taskDetail/:id" component={TaskDetailPage} />

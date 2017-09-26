@@ -12,7 +12,7 @@ import TopBanner from '../../components/TopBanner';
 import ViewForRightDom from '../../components/ViewForRightDom';
 import Modal2 from '../../components/Modal2';
 
-import { getTaskFinishedList,findTaskSubjectById,findTaskFinishedById } from '../../services/AppServices';
+import { getTaskFinishedList,findTaskSubjectById,findTaskFinishedById,saveFinishedComment,deleteFinishedComment,saveFinishedPraise,deleteFinishedPraise } from '../../services/AppServices';
 import { deleteItemByIndex } from '../../assets/utils/utils';
 export default class TaskDetail extends Component{
     constructor(props){
@@ -34,6 +34,56 @@ export default class TaskDetail extends Component{
 
         this.setState({numberList:arr,isShowDelete:false});
     }
+
+    /**
+     * @todo:后台没有点赞重复判断的操作。
+     * @param id
+     */
+    pramiseEvent(id){
+        !this.time && (this.time = new Date().getTime()-2000);
+        if(new Date().getTime() - this.time < 2000){
+            return
+        }
+        this.time = new Date().getTime();
+        let userId = 100;
+
+        saveFinishedPraise(id,userId).then(res => {
+            this.fetchData();
+        })
+    }
+
+    /**
+     * @todo:目前没有进行删除点赞的操作。
+     * @param id
+     */
+    deletePramiseEvent(id){
+        !this.Dtime && (this.Dtime = new Date().getTime()-2000);
+        if(new Date().getTime() - this.Dtime < 2000){
+            return
+        }
+        this.Dtime = new Date().getTime();
+        deleteFinishedPraise(id).then(res => {
+            this.fetchData();
+        })
+    }
+    speakEvent(){
+        let index = this.state.commentsIndex;
+        let taskFinishedId = this.state.numberList[index].id;
+        saveFinishedComment(this.state.commentsValue,taskFinishedId).then(res => {
+            res = JSON.parse(res);
+            console.log('saveFinishedComment',res);
+            this.setState({isSpeak:false},()=>{
+                this.fetchData();
+            });
+        })
+    }
+    deleteComments(id){
+        deleteFinishedComment(id).then(res => {
+            res = JSON.parse(res);
+            console.log('deleteFinishedComment',res);
+            this.fetchData();
+        })
+    }
     fetchMoreDate(){
         this.setState({
             currentPageIndex: this.state.currentPageIndex + 1
@@ -51,7 +101,7 @@ export default class TaskDetail extends Component{
             console.log('getTaskFinishedList',res);
             this.setState({
                 compoleteNumber:res.total,
-                numberList:res.rows
+                numberList:res.rows,//this.state.numberList.concat(res.rows)
             })
         });
         findTaskFinishedById(taskSubjectId).then(res => {
@@ -73,6 +123,7 @@ export default class TaskDetail extends Component{
         });
     }
     componentDidMount(){
+
         this.fetchData();
     }
     renderSpeak(){
@@ -80,11 +131,17 @@ export default class TaskDetail extends Component{
             <div className="rowCenter" style={{width:'100%',height:'50px',backgroundColor:'#f1f1f1',justifyContent:'space-around'}}>
 
                 <img className="iconDefault" style={{width:'40px',height:'25px'}} src={require("../../assets/images/speaks.png")} />
-                <input type="text" placeholder="请输入评论" className="inputDefault paddingLeft" style={{width:"60%",height:'30px',backgroundColor:'#cccccc',borderRadius:'5px'}} />
+                <input
+                    type="text"
+                    placeholder="请输入评论"
+                    className="inputDefault paddingLeft"
+                    style={{width:"60%",height:'30px',backgroundColor:'#cccccc',borderRadius:'5px'}}
+                    onChange={(e) => {this.setState({commentsValue:e.target.value})}}
+                />
                 <span
                     className="colorWhite bgOrange paddingLeft paddingRight"
                     style={{borderRadius:'10px',padding:'3px 10px'}}
-                    onClick={()=>this.setState({isSpeak:false})}
+                    onClick={()=>this.speakEvent()}
                 >发送</span>
             </div>
         )
@@ -188,19 +245,23 @@ export default class TaskDetail extends Component{
                                         </div>
                                         <div className="padding disFx">
                                             <div className="rowCenter" style={{width:'100%',height:'40px',overflow:'hidden'}}>
-                                                <img onClick={()=>this.setState({isSpeak:true})} src={require("../../assets/images/comments.png")} className="iconDefault" /><span onClick={()=>this.setState({isSpeak:true})} className="marginLeft">点评</span>
+                                                <img onClick={()=>this.setState({isSpeak:true,commentsIndex:index})} src={require("../../assets/images/comments.png")} className="iconDefault" /><span className="marginLeft">点评</span>
                                             </div>
                                             <div className="rowCenter" style={{width:'100%',height:'40px',overflow:'hidden'}}>
-                                                <img src={require("../../assets/images/pramise.png")}  className="iconDefault" /><span className="marginLeft">{item.praiseCount}</span>
+                                                <img onClick={()=>this.pramiseEvent(item.id)} src={require("../../assets/images/pramise.png")}  className="iconDefault" /><span className="marginLeft">{item.praiseCount}</span>
                                             </div>
                                         </div>
                                         {
                                             item.commentList.map((item,idx)=>{
                                                 return (
                                                     <div key={idx} className="border marginRight">
-                                                        <p className="padding margin">
-                                                            <span>{item.name}:</span>
-                                                            <span>{item.content}</span>
+                                                        <p className="commentsStyle note">
+                                                            <span className="commentsName">{item.id || 'liwudi'}</span>
+                                                            <span className="commentsContent">: {item.content}</span>
+                                                            <view className="cicleStyle" onClick={()=>{this.deleteComments(item.id)}}>
+                                                                <view className="cicleRow"></view>
+                                                                <view className="cicleColumn"></view>
+                                                            </view>
                                                         </p>
                                                     </div>
                                                 )
@@ -213,7 +274,10 @@ export default class TaskDetail extends Component{
                         })
                     }
                     </div>
-                    <div onClick={() => this.fetchMoreDate()} className="padding center colorMain marginButtom">查看更多</div>
+                    {
+                        this.state.compoleteNumber/10 > this.state.currentPageIndex ? <div onClick={() => this.fetchMoreDate()} className="padding center colorMain marginButtom">查看更多</div>:<div className="padding center colorNote marginButtom">没有更多了</div>
+
+                    }
 
 
                 </div>

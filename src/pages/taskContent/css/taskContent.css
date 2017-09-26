@@ -4,5 +4,6 @@
     border: none;
     outline: none;
     padding: 10px;
+    box-sizing: border-box;
     font-size: inherit;
 }

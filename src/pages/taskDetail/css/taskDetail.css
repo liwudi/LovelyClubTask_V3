@@ -45,3 +45,50 @@
 .colorMain{
     color: #3c78ff;
 }
+.commentsStyle{
+    padding: 5px 10px;
+    position: relative;
+}
+.commentsName{
+    display: inline-block;
+    width: 40px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.commentsContent{
+    display: inline-block;
+    width: 200px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.cicleStyle{
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #cccccc;
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.cicleRow{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%) rotate(45deg);
+    width: 10px;
+    height: 2px;
+    background-color: #aaaaaa;
+}
+.cicleColumn{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%) rotate(45deg);
+    width: 2px;
+    height: 10px;
+    background-color: #aaaaaa;
+}

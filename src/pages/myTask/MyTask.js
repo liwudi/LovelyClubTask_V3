@@ -8,15 +8,15 @@ import TopBanner from '../../components/TopBanner';
 import Button from '../../components/Button';
 import Img from '../../components/Img';
 
-import { saveTaskFinished } from '../../services/AppServices';
+import { saveTaskFinished,findTaskSubjectById } from '../../services/AppServices';
 
 export default class TaskDetail extends Component{
     constructor(props){
         super(props);
         this.state = {
+            taskSubjectId: 1,
             taskTitle:'数学',
             taskContent:'我是一个小逗比，咿呀咿呀咦！！',
-
         }
     }
     fetchData(){
@@ -27,8 +27,20 @@ export default class TaskDetail extends Component{
             console.log(res);
         })
     }
+    fetchData1(){
+        let taskSubjectId = this.state.taskSubjectId;
+        let _this = this;
+        findTaskSubjectById(taskSubjectId).then(res => {
+            res = JSON.parse(res);
+            console.log('findTaskSubjectById',res);
+            _this.setState({
+                taskTitle: res.subject,
+                taskContent:res.content
+            })
+        })
+    }
     componentDidMount(){
-        //this.fetchData();
+        this.fetchData1();
     }
     render(){
         return (
@@ -52,7 +64,7 @@ export default class TaskDetail extends Component{
                     </div>
 
                     <div className="center marginTop">
-                        <Button onClick={()=>this.props.history.push('/taskContent')} title="交作业" style={{width:"100px",height:"35px"}} />
+                        <Button onClick={()=>this.props.history.push(`/taskContent/${this.state.taskSubjectId}`)} title="交作业" style={{width:"100px",height:"35px"}} />
                     </div>
                 </div>
             </div>
