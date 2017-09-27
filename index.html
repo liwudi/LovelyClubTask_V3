@@ -16,5 +16,90 @@
 <div id = "root"></div>
 <script src="http://localhost:8080/bundle.js"></script>
 <!--<script src="public/bundle.js"></script>-->
+<script>
+//    ajax({
+//        url:'http://homework.shsoapp.com:80/ttzyservice/task/getTaskSubjectList',
+//        data:{
+//            page:1,
+//            rows:10
+//        },
+//        method:'POST',
+//        success:function (res) {
+//            console.log(res);
+//        },
+//        fail:function (err) {
+//            console.log(err);
+//        }
+//
+//    });
+//    ajax({
+//        url:'http://homework.shsoapp.com:80/ttzyservice/task/getImgByServerId',
+//        data:{
+//            serverId: 'MNEyvmZDkpe492srH21el_s-3TY2bxZlwhy57SdFaAzgUc-yiw0pi4QjJGUZGW60'
+//        },
+//        method:'GET',
+//        success:function (res) {
+//            console.log('成功获取图片',res);
+//            resolve(res);
+//        },
+//        fail:function (err) {
+//            reject(err);
+//        }
+//
+//    })
+    function ajax(opt) {
+        opt = opt || {};
+        opt.method = opt.method.toUpperCase() || 'POST';
+        opt.url = opt.url || '';
+        opt.async = opt.async || true;
+        opt.data = opt.data || null;
+        opt.success = opt.success || function () {};
+        opt.dataType = opt.dataType || "json";
+        var xmlHttp = null;
+        if (XMLHttpRequest) {
+            xmlHttp = new XMLHttpRequest();
+        }
+        else {
+            xmlHttp = new ActiveXObject('Microsoft.XMLHTTP');
+        }var params = [];
+        for (var key in opt.data){
+            params.push(key + '=' + opt.data[key]);
+        }
+        var postData = params.join('&');
+        if (opt.method.toUpperCase() === 'POST') {
+            xmlHttp.open(opt.method, opt.url, opt.async);
+            xmlHttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
+            xmlHttp.send(postData);
+        }
+        else if (opt.method.toUpperCase() === 'GET') {
+            xmlHttp.open(opt.method, opt.url + '?' + postData, opt.async);
+            xmlHttp.send(null);
+        }
+        xmlHttp.onreadystatechange = function () {
+            if(opt.dataType != 'jsonp'){
+                if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                    opt.success(xmlHttp.responseText);
+                }
+            }else{
+                //alert(1);
+                if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                    var oScript = document.createElement('script');
+                    document.body.appendChild(oScript);
+
+                    var callbackname = 'callback'
+                    oScript.src = opt.url + "?" +  postData+'&callback='+callbackname;
+
+                    window['callback'] = function(data) {
+                        opt.success(data);
+                        document.body.removeChild(oScript);
+                    };
+                }
+
+
+            }
+
+        };
+    }
+</script>
 </body>
 </html>

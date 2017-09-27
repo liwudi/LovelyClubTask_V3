@@ -14,7 +14,7 @@ export default class TaskDetail extends Component{
     constructor(props){
         super(props);
         this.state = {
-            taskSubjectId: 1,
+            taskSubjectId: props.match.params.taskId,
             taskTitle:'数学',
             taskContent:'我是一个小逗比，咿呀咿呀咦！！',
         }

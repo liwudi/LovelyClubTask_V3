@@ -236,7 +236,7 @@ export default class TaskDetail extends Component{
                                             {
                                                 item.taskVoiceList.map((every,idx) => {
                                                     return (
-                                                        <audio loop={idx==1?true:false} autoPlay={idx==1?true:false} key={idx} className="voiceBox marginTop" controls>
+                                                        <audio key={idx} className="voiceBox marginTop" controls>
                                                             <source src={serviceUrl + every.fullPath} type="audio/mpeg" />
                                                         </audio>
                                                     )

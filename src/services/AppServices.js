@@ -322,3 +322,84 @@ export function deleteFinishedPraise(id) {
         })
     })
 }
+
+
+export function dloadVoice(serverId,id) {
+    return new Promise((resolve,reject) => {
+        ajax({
+            url:makeUrl('/task/dloadVoice'),
+            data:{
+                serverId,
+                id
+            },
+            method:'GET',
+            success:function (res) {
+                resolve(res);
+            },
+            fail:function (err) {
+                reject(err);
+            }
+        })
+    })
+}
+
+export function dloadImg(serverId,id) {
+    return new Promise((resolve,reject) => {
+        ajax({
+            url:makeUrl('/task/dloadImg'),
+            data:{
+                serverId,
+                id
+            },
+            method:'GET',
+            success:function (res) {
+                resolve(res);
+            },
+            fail:function (err) {
+                reject(err);
+            }
+
+        })
+    })
+}
+
+export function getVoiceByServerId(serverId) {
+    return new Promise((resolve,reject) => {
+        ajax({
+            url:makeUrl('/task/getVoiceByServerId'),
+            data:{
+                serverId
+            },
+            method:'GET',
+            success:function (res) {
+                resolve(res);
+            },
+            fail:function (err) {
+                reject(err);
+            }
+
+        })
+    })
+}
+
+export function getImgByServerId(serverId) {
+    return new Promise((resolve,reject) => {
+        alert(serverId)
+        alert('serverId参数',serverId);
+        ajax({
+            url:makeUrl('/task/getImgByServerId'),
+            data:{
+                serverId
+            },
+            method:'GET',
+            success:function (res) {
+                alert('成功获取图片',res);
+                resolve(res);
+            },
+            fail:function (err) {
+                reject(err);
+            }
+
+        })
+    })
+}

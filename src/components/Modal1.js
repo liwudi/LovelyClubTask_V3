@@ -16,8 +16,17 @@ export default class Modal1 extends Component{
                 <div onClick={()=>{this.props.onCancel && this.props.onCancel()}} className="fx1"></div>
                 <div className="bgWhite">
                     <p className="center padding">{this.props.type == 1 ? "点击上传图片" : "点击开始录音"}</p>
-                    <div className="center marginBottom padding" style={{marginBottom:'20px'}}>
-                        <div onClick={this.props.onClick && this.props.onClick()} className="bgred" style={{width:'70px',height:'70px',borderRadius:'50%'}}></div>
+                    <div className="center marginBottom padding" style={{marginBottom:'20px',position:'relative'}}>
+
+                        <div onClick={()=>this.props.onClick && this.props.onClick()} className="bgred center" style={{width:'70px',height:'70px',borderRadius:'50%',color:'#fff'}}>
+                            {this.props.isRecording ? "录音中" : null}
+                        </div>
+                        {
+                            this.props.isComplated?<div style={{position:'absolute',right:"5px",top:"40%"}} onClick={()=>{this.props.onCancel && this.props.onCancel()}}>
+                                完成录音
+                            </div>:null
+                        }
+
                     </div>
                 </div>
             </div>

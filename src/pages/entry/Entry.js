@@ -20,9 +20,15 @@ export default class TaskDetail extends Component{
                 <TopBanner title="入口页面" router={this.props.history} />
                 <div className="fx1 bgWhite borderTop">
                     <ViewForRightArrow prompt="点击进入" onClick={()=>this.props.history.push('/home')} title="教师入口" />
-                    <ViewForRightArrow prompt="点击进入" onClick={()=>this.props.history.push('/mytask')} title="学生入口" />
+                    <ViewForRightArrow prompt="点击进入" onClick={()=>this.props.history.push('/mytask/1')} title="学生入口" />
                 </div>
             </div>
         )
     }
 }
+
+/**
+ * @todo:目前有userId的问题，需要明天再进行接口梳理
+ *
+ * @todo:需要做调用微信js-sdk的动画。
+ */

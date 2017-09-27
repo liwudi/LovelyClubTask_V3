@@ -5,13 +5,13 @@
 
 //线上环境
 const service = {
-    main_url:`http://datainfo.duapp.com/shopdata/getclass.php`
+    main_url:``
 };
 
 
 //内网环境
 const service_test = {
-    main_url:`http://homework.shsoapp.com:8888/ttzyservice/`
+    main_url:`http://homework.shsoapp.com:80/ttzyservice/`
 };
 
 

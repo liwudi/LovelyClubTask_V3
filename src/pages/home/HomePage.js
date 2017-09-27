@@ -112,7 +112,7 @@ class HomePage extends Component{
                                     </div>
                                     <div className="functionLink disFx paddingTop paddingBottom" style={{backgroundColor:'#f9f9f9',color:"#999999"}}>
                                         <p onClick={()=>{this.itemEvent(index)}} className="fx1 center borderRight">推送通知</p>
-                                        <p onClick={()=>{this.props.history.push('/taskCard')}} className="fx1 center borderRight">获取作业卡</p>
+                                        <p onClick={()=>{this.props.history.push(`/taskCard/${item.id}`)}} className="fx1 center borderRight">获取作业卡</p>
                                         <p onClick={()=>{this.setState({isShowModal:true,editIndex:index})}} className="fx1 center">设置</p>
                                     </div>
                                 </div>

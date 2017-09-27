@@ -8,11 +8,16 @@ import './css/taskCardPage.css';
 import TopBanner from '../../components/TopBanner';
 import NewTask from '../../components/NewTask';
 import Button from '../../components/Button';
+
+import serverConfig from '../../config';
+const serviceUrl = serverConfig.server.main_url;
+
 export default class HomePage extends Component{
     constructor(props){
         super(props);
         this.state = {
-            tasks:[]
+            tasks:[],
+            taskId:props.match.params.taskId
         }
     }
     renderContent(){
@@ -36,6 +41,25 @@ export default class HomePage extends Component{
     renderCard(){
         
     }
+    share(){
+        alert('开始分享，本次id是',this.state.taskId);
+        let taskId = this.state.taskId;
+        wx.onMenuShareAppMessage({
+            title: '作业', // 分享标题
+            desc: '这是语文作业', // 分享描述
+            link: `${serviceUrl}/MyTask/${taskId}`, // 分享链接
+            imgUrl: require('../../assets/images/TaskDetail.jpg'), // 分享图标
+            type: 'link', // 分享类型,music、video或link，不填默认为link
+
+            success: function () {
+                // 用户确认分享后执行的回调函数
+
+            },
+            cancel: function () {
+                // 用户取消分享后执行的回调函数
+            }
+        });
+    }
     render(){
         console.log('当前history',this.props.history);
         return(
@@ -47,7 +71,7 @@ export default class HomePage extends Component{
                         <div className="center" style={{width:'100%',height:'50px'}}>数学</div>
                         <div className="center" style={{width:'100%',height:'50px'}}>我是一个小逗比，咿呀咿呀咦！！</div>
                         <div className="center" style={{width:'100%',height:'100px'}}>
-                            二维码图片区
+                            <button onClick={()=>this.share()}>分享朋友</button>
                         </div>
                         <div>
                             <p className="center note padding">长按扫描二维码领取作业</p>

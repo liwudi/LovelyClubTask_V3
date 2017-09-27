@@ -7,3 +7,17 @@
     box-sizing: border-box;
     font-size: inherit;
 }
+.upLoadImageContainer{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.upLoadImage{
+    width: 100%;
+    height: 100%;
+}
+.upLoadImageBox{
+    width: 100px;
+    height:100px;
+    padding: 5px;
+}

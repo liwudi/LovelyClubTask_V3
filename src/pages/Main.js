@@ -28,10 +28,10 @@ export default class Main extends Component{
                         <Route path="/setTaskPage/:isEditPage" component={SetTaskPage} />
                         <Route path="/taskContent/:taskSubjectId" component={TaskContent} />
                         <Route path="/relatedCourses" component={RelatedCoursePage} />
-                        <Route path="/taskCard" component={TaskCardPage} />
+                        <Route path="/taskCard/:taskId" component={TaskCardPage} />
                         <Route path="/taskDetail/:id" component={TaskDetailPage} />
 
-                        <Route path="/mytask" component={MyTask} />
+                        <Route path="/mytask/:taskId" component={MyTask} />
                         <Route path="/" component={Entry}/>
                     </Switch>
 
