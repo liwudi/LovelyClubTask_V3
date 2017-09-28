@@ -28,7 +28,7 @@ class TaskContent extends Component{
             tasks:[],
             taskSubjectId: props.match.params.taskSubjectId,
             willAddVoiceList:[],
-            willAddImageList:[]
+            addImageList:[]
         }
     }
     fetchData(){
@@ -70,11 +70,12 @@ class TaskContent extends Component{
 
     }
     addVoice(){
-        alert('开始录音');
         this.isComplated = false;
         if(this.isRecording){
+            alert("执行录音结束end事件");
             this.addVoiceEndEvent();
         }else{
+            alert('开始执行录音start');
             this.addVoiceStartEvent();
         }
     }
@@ -97,7 +98,7 @@ class TaskContent extends Component{
         wx.onVoiceRecordEnd({
             complete: function (res) {
                 voice.localId = res.localId;
-                alert('录音时间已超过一分钟');
+                //alert('录音时间已超过一分钟');
                 _this.setState({
                     isShowVoiceComplateInfo: true
                 })
@@ -113,6 +114,7 @@ class TaskContent extends Component{
             success: function (res) {
                 _this.isRecording = false;
                 let localId = res.localId;
+                alert("录音结束>>"+localId);
                 //Todo:上传语音id得到serverId
                 _this.upLoadVoice(localId,taskFinishedId);
             },
@@ -127,29 +129,64 @@ class TaskContent extends Component{
             success: function (res) {
                 let serverId = res.serverId;
                 this.isComplated = true;
-                getVoiceByServerId(serverId).then(res => {
-                    //声音下载到本地
-                    let url = serviceUrl + res.fullPath;
-                    _this.setState({
-                        willAddVoiceList:_this.state.willAddVoiceList.concat([url])
+                let id = -(Math.floor(Math.random()*100000)+10000);
+                dloadVoice(serverId,id).then(res => {
+                    getVoiceByServerId(serverId).then(res => {
+                        //声音下载到本地
+                        let url = serviceUrl + res.fullPath;
+                        _this.setState({
+                            willAddVoiceList:_this.state.willAddVoiceList.concat([url])
+                        })
                     })
                 })
             }
         })
     }
     addPicEvent(){
-        //alert('开始上传图片')
+
         this.chooseImage();
     }
     chooseImage(){
         let _this = this;
         wx.chooseImage({
             success: function (res) {
-                //images.localId = res.localIds;
-                //alert('已选择 ' + res.localIds.length + ' 张图片');
-                var localIds = res.localIds;
 
+                let localIds = res.localIds;
 
+                let i = 0, length = localIds.length;
+                //upload();
+                function upload() {
+                    alert('开始上传图片'+i);
+                    alert('这是的localId是》》'+localIds[i]);
+                    wx.upLoadImage({
+                        localId: localIds[i],
+                        isShowProgressTips: 1,
+                        success: function (res) {
+                            alert('上传图片成功，serverid>>'+res.serverId);
+                            i++;
+                            if (i < length) {
+                                upload();
+                            }
+                            let serverId = res.serverId;
+                            let id = -(Math.floor(Math.random()*100000)+10000);
+                            dloadImg(serverId,id).then(res => {
+                                getImgByServerId(serverId).then(res => {
+                                    alert('获取图片成功')
+                                    res = JSON.parse(res);
+                                    let url = serviceUrl + res.fullPath;
+                                    _this.setState({
+                                        addImageList:_this.state.addImageList.concat([url])
+                                    });
+                                }).catch(err => {
+                                    alert('没有下载到本>>>>'+err);
+                                })
+                            });
+                        },
+                        fail: function (res) {
+                            alert('上传图片失败'+res);
+                        }
+                    })
+                }
                 let localId = localIds.toString();
                 _this.upLoadImage(localId);
             },
@@ -158,46 +195,37 @@ class TaskContent extends Component{
             }
         })
     }
+
     upLoadImage(localId){
         let _this = this;
-        let taskFinishedId = '1';
         wx.uploadImage({
             localId: localId, // 需要上传的图片的本地ID，由chooseImage接口获得
             isShowProgressTips: 1, // 默认为1，显示进度提示
             success: function (res) {
                 var serverId = res.serverId; // 返回图片的服务器端ID
-                alert("uploadImage success!  serverId >>>>"+serverId);
                 //将上传的图片下载到本地服务器
+                let id = -(Math.floor(Math.random()*100000)+10000);
+                dloadImg(serverId,id).then(res => {
+                    alert('后台已经从服务器上下载了图片');
+                    alert('此时再用serverId取服务端图片》》'+serverId);
+                    getImgByServerId(serverId).then(res => {
+                        //图片下载到本地
+                        res = JSON.parse(res);
+                        alert('下载到本地的图片路径>>>>>'+res.fullPath);
+                        let url = serviceUrl + res.fullPath;
 
-                getImgByServerId(serverId).then(res => {
-                    //图片下载到本地
-                    alert('下载到本地的res',res);
-                    let url = serviceUrl + res.fullPath;
-                    _this.setState({
-                        willAddImageList:_this.state.willAddImageList.concat([url])
+                        alert(_this.state.addImageList.concat([url]));
+                        _this.setState({
+                            addImageList:_this.state.addImageList.concat([url])
+                        });
+                    }).catch(err => {
+                        alert('没有下载到本>>>>'+err);
                     })
-                }).catch(err => {
-                    alert('没有下载到本地',err);
-                })
-                // $.ajax({
-                //     //url : 'http://homework.shsoapp.com/testweixin/DloadImgServlet',
-                //     url : 'http://homework.shsoapp.com/ttzyservice/task/dloadImg',
-                //     type : 'GET',
-                //     dataType : 'json',
-                //     data : {
-                //         serverId : serverId,
-                //         taskFinishedId : '1'
-                //     },
-                //     success : function(data) {
-                //         alert('图片已下载到本地！'+data);
-                //
-                //     }
-                // });
-
-
+                });
             }
         });
     }
+
     render(){
         return(
             <div className="pageBox">
@@ -221,10 +249,10 @@ class TaskContent extends Component{
                 </div>
                 <div className="marginTop upLoadImageContainer bgWhite">
                     {
-                        this.state.willAddImageList.map((item,index) => {
+                        this.state.addImageList.map((item,index) => {
                             return (
                                 <div className="upLoadImageBox" key={index}>
-                                    <img className="upLoadImage" src={willAddImageList[index]} alt="上传图片" />
+                                    <img className="upLoadImage" src={this.state.addImageList[index]} alt="上传图片" />
                                 </div>
                             )
                         })

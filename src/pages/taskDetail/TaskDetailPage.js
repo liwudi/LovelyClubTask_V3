@@ -153,7 +153,7 @@ export default class TaskDetail extends Component{
                 <div className="fx1 bgWhite borderTop boxSizing" style={{overflow:'auto'}}>
                     <div className="detail boxSizing">
                         <div className='center marginTop'>
-                            <img className="img" src={require("../../assets/images/TaskDetail.jpg")} />
+                            <img className="img" src={require("../../assets/images/userImg.png")} />
                         </div>
                         <div className="center padding">{this.state.taskTitle||'任务标题'}</div>
                         <div
@@ -162,7 +162,6 @@ export default class TaskDetail extends Component{
                         >
                             {this.state.taskContent||'任务内容'}
                         </div>
-
                     </div>
                     <div className="taskPic boxSizing">
                         {
@@ -203,12 +202,12 @@ export default class TaskDetail extends Component{
                             return (
                                 <div key={index} className="item disFx boxSizing borderBottom paddingBottom paddingTop">
                                     <div className="itemLeft">
-                                        <img src={item.imageUrl || require('../../assets/images/TaskDetail.jpg')} style={{width:'30px',height:'30px',borderRadius:'50%'}}/>
+                                        <img src={item.user.headImgUrl || require('../../assets/images/userImg.png')} style={{width:'30px',height:'30px',borderRadius:'50%'}}/>
                                     </div>
                                     <div className="itemRight fx1">
                                         <div className="disFx">
                                             <div className="fx1">
-                                                <p className="colorNote1 baseSize">{item.title||'山花烂漫时'}</p>
+                                                <p className="colorNote1 baseSize">{item.user.nickname||'山花烂漫时'}</p>
                                                 <p className="colorNote smallSize">{item.time||'2017-09-23 12:02:23'}</p>
                                             </div>
                                             <div onClick={()=>{this.setState({isShowDelete:true,currentDeleteIndex:index})}} className="bigSize marginRight">...</div>

@@ -8,7 +8,7 @@ import '../css/common.css';
 export default class NewTask extends Component{
     render(){
         return(
-            <div className="baseViewDom colorRed center">
+            <div style={this.props.style} className="baseViewDom colorRed center">
                 {this.props.children}
             </div>
         )

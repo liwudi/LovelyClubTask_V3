@@ -14,10 +14,13 @@ import {
     TaskActions
 } from '../../actions/index';
 import { getTaskSubjectList,deleteTaskSubject } from '../../services/AppServices';
+import './css/HomePage.css'
 class HomePage extends Component{
     constructor(props){
         super(props);
         this.state = {
+            total:0,
+            pageNumber:1,
             tasks:[{
 
             }],
@@ -75,11 +78,23 @@ class HomePage extends Component{
 
         this.props.history.push(`/taskDetail/${id}`)
     }
-    fetchData(next){
-        getTaskSubjectList().then(res=>{
-            console.log('getTaskSubjectList',res);
+    fetchMoreData(){
+        getTaskSubjectList().then(res => {
             res = JSON.parse(res);
             this.setState({
+                total:res.total,
+                tasks:res.rows
+            },() => {
+                next && next();
+            });
+        })
+    }
+    fetchData(next){
+        getTaskSubjectList().then(res=>{
+            res = JSON.parse(res);
+            console.log('getTaskSubjectList',res);
+            this.setState({
+                total:res.total,
                 tasks:res.rows
             },() => {
                next && next();
@@ -119,6 +134,14 @@ class HomePage extends Component{
                             )
                         })
                     }
+                    {
+                        this.state.total/10 >= this.state.pageNumber ? <div className="loadMore center">
+                            <span onClick={()=>this.fetchMoreData()}>加载更多...</span>
+                        </div>:<div className="loadMore center">
+                            <span style={{color:'#999999'}} onClick={()=>this.fetchMoreData()}>没有更多了</span>
+                        </div>
+                    }
+
 
                 </div>
             )
@@ -156,13 +179,12 @@ class HomePage extends Component{
         return(
             <div className="pageBox" style={{position:'relative'}}>
                 <TopBanner title="作业管理" router={this.props.history} />
-                <div className="fx1 center" style={{overflow:'auto'}}>
+                <div className="fx1 fix boxSizing center" style={{overflow:'auto',borderTop:'1px solid #cccccc'}}>
                     {
                         this.renderContent()
                     }
                 </div>
-                <NewTask>
-
+                <NewTask style={{borderTop:'1px solid #cccccc'}}>
                     <span onClick={() => this.setTaskEvent()}>布置作业</span>
                 </NewTask>
                 {
