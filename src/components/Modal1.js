@@ -22,7 +22,10 @@ export default class Modal1 extends Component{
                             {this.props.isRecording ? "录音中" : null}
                         </div>
                         {
-                            this.props.isComplated?<div style={{position:'absolute',right:"5px",top:"40%"}} onClick={()=>{this.props.onCancel && this.props.onCancel()}}>
+                            this.props.isComplated?
+                                <div style={{position:'absolute',right:"5px",top:"40%"}}
+                                     onClick={()=>{this.props.onCancel && this.props.onCancel();this.props.upLoadVoice && this.props.upLoadVoice()}}
+                            >
                                 完成录音
                             </div>:null
                         }

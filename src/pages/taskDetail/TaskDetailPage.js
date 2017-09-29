@@ -12,7 +12,7 @@ import TopBanner from '../../components/TopBanner';
 import ViewForRightDom from '../../components/ViewForRightDom';
 import Modal2 from '../../components/Modal2';
 
-import { getTaskFinishedList,findTaskSubjectById,findTaskFinishedById,saveFinishedComment,deleteFinishedComment,saveFinishedPraise,deleteFinishedPraise } from '../../services/AppServices';
+import { getTaskFinishedList,findTaskSubjectById,findTaskFinishedById,deleteTaskFinished,saveFinishedComment,deleteFinishedComment,saveFinishedPraise,deleteFinishedPraise } from '../../services/AppServices';
 import { deleteItemByIndex } from '../../assets/utils/utils';
 export default class TaskDetail extends Component{
     constructor(props){
@@ -30,9 +30,16 @@ export default class TaskDetail extends Component{
     }
     deleteEvent(){
         //console.log(this.state.numberList,this.state.currentDeleteIndex)
-        const arr = deleteItemByIndex(this.state.numberList,this.state.currentDeleteIndex);
+        //const arr = deleteItemByIndex(this.state.numberList,this.state.currentDeleteIndex);
+        let _this = this;
+        let taskFinishedId = this.state.numberList[this.state.currentDeleteIndex].id;
+        deleteTaskFinished(taskFinishedId).then(res => {
+            _this.fetchData();
+            _this.setState({
+                isShowDelete: false
+            })
+        })
 
-        this.setState({numberList:arr,isShowDelete:false});
     }
 
     /**
@@ -92,7 +99,7 @@ export default class TaskDetail extends Component{
         });
 
     }
-    fetchData(pageNumber = 1,rowsNumber = 10){
+    fetchData(pageNumber = 1,rowsNumber = 100){
         let taskSubjectId = this.props.match.params.id;
         let page = pageNumber;
         let rows = rowsNumber;
@@ -202,12 +209,12 @@ export default class TaskDetail extends Component{
                             return (
                                 <div key={index} className="item disFx boxSizing borderBottom paddingBottom paddingTop">
                                     <div className="itemLeft">
-                                        <img src={item.user.headImgUrl || require('../../assets/images/userImg.png')} style={{width:'30px',height:'30px',borderRadius:'50%'}}/>
+                                        <img src={item.user && item.user.headImgUrl || require('../../assets/images/userImg.png')} style={{width:'30px',height:'30px',borderRadius:'50%'}}/>
                                     </div>
                                     <div className="itemRight fx1">
                                         <div className="disFx">
                                             <div className="fx1">
-                                                <p className="colorNote1 baseSize">{item.user.nickname||'山花烂漫时'}</p>
+                                                <p className="colorNote1 baseSize">{item.user && item.user.nickname||'山花烂漫时'}</p>
                                                 <p className="colorNote smallSize">{item.time||'2017-09-23 12:02:23'}</p>
                                             </div>
                                             <div onClick={()=>{this.setState({isShowDelete:true,currentDeleteIndex:index})}} className="bigSize marginRight">...</div>

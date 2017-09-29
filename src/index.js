@@ -16,6 +16,7 @@ const store = createStore(rootReducers,
     applyMiddleware(thunkMiddleware)
 );
 import Main from './pages/Main';
+//import './getUserInfo';
 class App extends Component{
     render(){
         return (

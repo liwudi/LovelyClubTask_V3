@@ -24,7 +24,7 @@ class SetTaskPage extends Component{
         super(props);
         this.state = {
             taskTitle:props.taskStore.taskTitle,
-
+            taskSubjectId:props.taskStore.taskSubjectId,
             isChecked:false,
             isShowModal:false,
             taskContent:props.taskStore.taskContent

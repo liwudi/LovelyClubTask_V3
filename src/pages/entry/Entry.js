@@ -7,6 +7,7 @@ import '../../css/common.css';
 import TopBanner from '../../components/TopBanner';
 
 import ViewForRightArrow from '../../components/ViewForRightArrow';
+import { getUserInfo } from '../../services/AppServices'
 export default class TaskDetail extends Component{
     constructor(props){
         super(props);
@@ -14,13 +15,14 @@ export default class TaskDetail extends Component{
 
         }
     }
+
     render(){
         return (
             <div className="pageBox">
                 <TopBanner title="入口页面" router={this.props.history} />
                 <div className="fx1 bgWhite borderTop">
                     <ViewForRightArrow prompt="点击进入" onClick={()=>this.props.history.push('/home')} title="教师入口" />
-                    <ViewForRightArrow prompt="点击进入" onClick={()=>this.props.history.push('/mytask/1')} title="学生入口" />
+                    <ViewForRightArrow prompt="点击进入" onClick={()=>this.props.history.push('/mytask/8')} title="学生入口" />
                 </div>
             </div>
         )

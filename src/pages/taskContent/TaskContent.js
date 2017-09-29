@@ -15,7 +15,7 @@ import {
     TYPES,
     TaskActions
 } from '../../actions/index';
-import { saveTaskFinished,dloadVoice,dloadImg,getVoiceByServerId,getImgByServerId } from '../../services/AppServices';
+import { saveTaskFinished,dloadVoice,dloadImg,getVoiceByServerId,getImgByServerId,taskSubject_dloadVoice,taskSubject_dloadImg } from '../../services/AppServices';
 
 
 import serverConfig from '../../config';
@@ -28,15 +28,17 @@ class TaskContent extends Component{
             tasks:[],
             taskSubjectId: props.match.params.taskSubjectId,
             willAddVoiceList:[],
-            addImageList:[]
+            addImageList:[],
+            id: -(Math.floor(Math.random()*100000)+10000)
         }
     }
     fetchData(){
         let content = this.state.inputValue;
         let taskSubjectId = Number(this.state.taskSubjectId) || 1;
         let userId = 100;
-        saveTaskFinished(content,taskSubjectId,userId).then(res => {
+        saveTaskFinished(content,taskSubjectId,userId,this.state.id).then(res => {
             console.log('saveTaskFinished',res);
+            alert('成功的保存了作业，上传的id是'+this.state.id);
             this.props.history.goBack();
         }).catch(err => {
             this.setState({
@@ -55,6 +57,15 @@ class TaskContent extends Component{
             </div>
         )
     }
+
+    /**
+     * @这个goback的难点在作业的入口有几个？
+     * 1、学生交作业是一个入口
+     * 2、老师布置作业，编辑作业内容的时候算一个入口。
+     * 3、学生编辑已经提交的作业。
+     * 4、老师编辑已经布置的作业。
+     *
+     */
     goBack(){
         console.log(this.props.match.params.taskSubjectId);
 
@@ -62,7 +73,7 @@ class TaskContent extends Component{
             //在提交作业的情况下
             this.fetchData();
         }else{
-            //在编辑作业的情况下
+            //在布置作业的情况下
 
             this.props.dispatch(TaskActions.taskContent(this.state.inputValue));
             this.props.history.goBack();
@@ -70,12 +81,19 @@ class TaskContent extends Component{
 
     }
     addVoice(){
-        this.isComplated = false;
-        if(this.isRecording){
+        let _this = this;
+        //this.isComplated = false;
+        this.setState({
+            isComplated: false
+        })
+        if(this.state.isRecording){
             alert("执行录音结束end事件");
             this.addVoiceEndEvent();
         }else{
             alert('开始执行录音start');
+            _this.setState({
+                isRecording: true
+            })
             this.addVoiceStartEvent();
         }
     }
@@ -83,9 +101,10 @@ class TaskContent extends Component{
     addVoiceStartEvent(){
         let _this = this;
         wx.startRecord({
-            success: function () {
-                _this.isRecording = true;
-                console.log('录音成功');
+            success: function (res) {
+                //_this.isRecording = true;
+
+                alert('录音成功start'+res);
 
             },
             cancel: function () {
@@ -97,48 +116,76 @@ class TaskContent extends Component{
         });
         wx.onVoiceRecordEnd({
             complete: function (res) {
-                voice.localId = res.localId;
-                //alert('录音时间已超过一分钟');
+                //voice.localId = res.localId;
+                let localId = res.localId;
+                alert('录音时间已超过一分钟>>'+res.localId);
                 _this.setState({
-                    isShowVoiceComplateInfo: true
-                })
+                    isShowVoiceComplateInfo: true,
+                    isRecording: false,
+                    isComplated: true
+                });
                 //Todo:上传语音id得到serverId
-                _this.upLoadVoice(localId,taskFinishedId);
+                //_this.upLoadVoice(localId,taskFinishedId);
             }
         });
     }
 
     addVoiceEndEvent(){
+        let _this = this;
         let taskFinishedId = '1';
         wx.stopRecord({
             success: function (res) {
-                _this.isRecording = false;
-                let localId = res.localId;
-                alert("录音结束>>"+localId);
+                //_this.isRecording = false;
+                _this.localId = res.localId;
+                _this.setState({
+                    isRecording: false,
+                    isComplated: true
+                });
+
+
+                alert("录音结束EndEvent>>"+_this.localId);
                 //Todo:上传语音id得到serverId
-                _this.upLoadVoice(localId,taskFinishedId);
+                //_this.upLoadVoice(localId,taskFinishedId);
+
+
             },
-            fail: function (res) {
+            fail: function (err) {
+                alert("录音结束EndEvent>>"+err);
                 alert(JSON.stringify(res));
             }
         });
     }
-    upLoadVoice(localId,taskFinishedId){
-        wx.upLoadVoice({
-            localId:localId,
+    upLoadVoice(){
+        alert('录音结束了，开始长传语音')
+        let _this = this;
+        alert('当前上传的localId>>'+_this.localId);
+        alert('当前上传localId>>的类型'+(typeof _this.localId));
+
+        wx.uploadVoice({
+            localId:_this.localId+"",
             success: function (res) {
                 let serverId = res.serverId;
-                this.isComplated = true;
-                let id = -(Math.floor(Math.random()*100000)+10000);
-                dloadVoice(serverId,id).then(res => {
+                //this.isComplated = true;
+                alert('上传语音成功，关闭右边的对号，下面自动调用下载语音>>serverID'+serverId);
+
+
+                dloadVoice(serverId,_this.state.id).then(res => {
+                    alert('服务端已经下载好语音了')
                     getVoiceByServerId(serverId).then(res => {
                         //声音下载到本地
+                        alert("声音下载到本地"+res);
+                        res = JSON.parse(res);
                         let url = serviceUrl + res.fullPath;
                         _this.setState({
                             willAddVoiceList:_this.state.willAddVoiceList.concat([url])
                         })
                     })
+                }).catch(err=>{
+                    alert('发生错误>>'+err);
                 })
+            },
+            fail: function (err) {
+                alert('上传语音失败'+err);
             }
         })
     }
@@ -168,8 +215,8 @@ class TaskContent extends Component{
                                 upload();
                             }
                             let serverId = res.serverId;
-                            let id = -(Math.floor(Math.random()*100000)+10000);
-                            dloadImg(serverId,id).then(res => {
+
+                            dloadImg(serverId,_this.state.id).then(res => {
                                 getImgByServerId(serverId).then(res => {
                                     alert('获取图片成功')
                                     res = JSON.parse(res);
@@ -204,8 +251,8 @@ class TaskContent extends Component{
             success: function (res) {
                 var serverId = res.serverId; // 返回图片的服务器端ID
                 //将上传的图片下载到本地服务器
-                let id = -(Math.floor(Math.random()*100000)+10000);
-                dloadImg(serverId,id).then(res => {
+
+                dloadImg(serverId,_this.state.id).then(res => {
                     alert('后台已经从服务器上下载了图片');
                     alert('此时再用serverId取服务端图片》》'+serverId);
                     getImgByServerId(serverId).then(res => {
@@ -241,7 +288,7 @@ class TaskContent extends Component{
                         this.state.willAddVoiceList.map((item,index) => {
                             return (
                                 <audio key={index} className="voiceBox marginTop" controls>
-                                    <source src={willAddVoiceList[index]} type="audio/mpeg" />
+                                    <source src={this.state.willAddVoiceList[index]} type="audio/mpeg" />
                                 </audio>
                             )
                         })
@@ -274,7 +321,14 @@ class TaskContent extends Component{
                 </div>
                 </div>
                 {
-                    this.state.isAddVoice ? <Modal1 isComplated={this.isComplated} isRecording={this.isRecording} onClick={()=>this.addVoice()} onCancel={()=>{this.isComplated=false;this.setState({isAddVoice:false})}} />:null
+                    this.state.isAddVoice ?
+                        <Modal1
+                            isComplated={this.state.isComplated}
+                            isRecording={this.state.isRecording}
+                            onClick={()=>this.addVoice()}
+                            onCancel={()=>{this.state.isComplated=false;this.setState({isAddVoice:false})}}
+                            upLoadVoice={()=>{this.upLoadVoice()}}
+                        />:null
                 }
                 {
                     this.state.isAddPic ? <Modal1 onClick={()=>this.addPicEvent()}  type={1} onCancel={()=>{this.setState({isAddPic:false})}} />:null

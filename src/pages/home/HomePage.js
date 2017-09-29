@@ -46,6 +46,7 @@ class HomePage extends Component{
             })
         }
     }
+
     closeShowModal(){
         this.setState({
             isShowModal:false
@@ -64,12 +65,14 @@ class HomePage extends Component{
         this.props.dispatch(TaskActions.taskId(subjectId));
         this.props.dispatch(TaskActions.taskTitle(''));
         this.props.dispatch(TaskActions.taskContent(''));
+        this.props.dispatch(TaskActions.taskSubjectId(''));
         this.props.history.push(`/setTaskPage/${true}`);
     }
     setTaskEvent(){
         this.props.dispatch(TaskActions.taskId(''));
         this.props.dispatch(TaskActions.taskTitle(''));
         this.props.dispatch(TaskActions.taskContent(''));
+        this.props.dispatch(TaskActions.taskSubjectId(''));
         this.props.history.push(`/setTaskPage/${false}`);
     }
     gotoDetailEvent(index){
@@ -103,6 +106,10 @@ class HomePage extends Component{
     }
     componentDidMount(){
         this.fetchData();
+        alert(openId);
+        getUserInfo(openId).then(res => {
+            alert("获取的用户信息"+res);
+        })
     }
 
     renderContent(){

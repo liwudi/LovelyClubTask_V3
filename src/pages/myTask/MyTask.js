@@ -8,9 +8,9 @@ import TopBanner from '../../components/TopBanner';
 import Button from '../../components/Button';
 import Img from '../../components/Img';
 
-import { saveTaskFinished,findTaskSubjectById } from '../../services/AppServices';
+import { saveTaskFinished,findTaskSubjectById,getUserInfo } from '../../services/AppServices';
 
-export default class TaskDetail extends Component{
+export default class MyTask extends Component{
     constructor(props){
         super(props);
         this.state = {
@@ -37,6 +37,9 @@ export default class TaskDetail extends Component{
                 taskTitle: res.subject,
                 taskContent:res.content
             })
+        })
+        getUserInfo(document.getElementById("openId").value).then(res => {
+            alert('获取的用户信息',res);
         })
     }
     componentDidMount(){

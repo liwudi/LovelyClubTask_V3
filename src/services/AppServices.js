@@ -184,14 +184,15 @@ export function findTaskFinishedById(id) {
 }
 
 
-export function saveTaskFinished(content,taskSubjectId,userId) {
+export function saveTaskFinished(content,taskSubjectId,userId,id) {
     return new Promise((resolve,reject) => {
         ajax({
             url:makeUrl('/task/saveTaskFinished'),
             data:{
                 content,
                 taskSubjectId,
-                userId
+                userId,
+                id
             },
             method:'POST',
             success:function (res) {
@@ -323,14 +324,14 @@ export function deleteFinishedPraise(id) {
     })
 }
 
-
-export function dloadVoice(serverId,id) {
+//作业题目-下载声音
+export function taskSubject_dloadVoice(serverId,taskSubjectId) {
     return new Promise((resolve,reject) => {
         ajax({
             url:makeUrl('/task/dloadVoice'),
             data:{
                 serverId,
-                id
+                taskSubjectId
             },
             method:'GET',
             success:function (res) {
@@ -342,14 +343,53 @@ export function dloadVoice(serverId,id) {
         })
     })
 }
-
-export function dloadImg(serverId,id) {
+//作业题目-下载图片
+export function taskSubject_dloadImg(serverId,taskSubjectId) {
     return new Promise((resolve,reject) => {
         ajax({
             url:makeUrl('/task/dloadImg'),
             data:{
                 serverId,
-                id
+                taskSubjectId
+            },
+            method:'GET',
+            success:function (res) {
+                resolve(res);
+            },
+            fail:function (err) {
+                reject(err);
+            }
+        })
+    })
+}
+//作业结果-下载声音
+export function dloadVoice(serverId,taskFinishedId) {
+    return new Promise((resolve,reject) => {
+        ajax({
+            url:makeUrl('/task/dloadVoice'),
+            data:{
+                serverId,
+                taskFinishedId
+            },
+            method:'GET',
+            success:function (res) {
+                resolve(res);
+            },
+            fail:function (err) {
+                reject(err);
+            }
+
+        })
+    })
+}
+//作业结果-下载图片
+export function dloadImg(serverId,taskFinishedId) {
+    return new Promise((resolve,reject) => {
+        ajax({
+            url:makeUrl('/task/dloadImg'),
+            data:{
+                serverId,
+                taskFinishedId
             },
             method:'GET',
             success:function (res) {
@@ -384,8 +424,8 @@ export function getVoiceByServerId(serverId) {
 
 export function getImgByServerId(serverId) {
     return new Promise((resolve,reject) => {
-        alert(serverId)
-        alert('serverId参数',serverId);
+
+        alert('serverId参数'+serverId);
         ajax({
             url:makeUrl('/task/getImgByServerId'),
             data:{
@@ -401,5 +441,25 @@ export function getImgByServerId(serverId) {
             }
 
         })
+    })
+}
+
+
+
+export function getUserInfo(openId) {
+    return new Promise((resolve,reject) => {
+        ajax({
+            url:makeUrl('/task/getUserInfo'),
+            data:{
+                openId
+            },
+            method:'POST',
+            success:function (res) {
+                resolve(res);
+            },
+            fail:function (err) {
+                reject(err);
+            }
+        });
     })
 }
