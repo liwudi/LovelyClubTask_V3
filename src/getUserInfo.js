@@ -3,11 +3,14 @@
  */
 import { getUserInfo } from './services/AppServices';
 
-getUserInfo("oNye5t8DFmkU_mSGrgj3nRvwC9KM").then(res => {
+getUserInfo(openId).then(res => {
     alert(res);
     localStorage.setItem("userInfo",res);
 });
 
-setInterval(()=>{
-    localStorage.clear();
-},1000*60*60);
+export default function getuserInfo() {
+    getUserInfo(openId).then(res => {
+        alert(res);
+        localStorage.setItem("userInfo",res);
+    });
+}

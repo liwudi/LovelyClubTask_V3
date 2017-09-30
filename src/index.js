@@ -17,6 +17,9 @@ const store = createStore(rootReducers,
 );
 import Main from './pages/Main';
 //import './getUserInfo';
+/**
+ * @todo:目前getUserInfo是由异步的操作的。
+ */
 class App extends Component{
     render(){
         return (

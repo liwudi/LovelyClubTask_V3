@@ -52,7 +52,7 @@ export default class TaskDetail extends Component{
             return
         }
         this.time = new Date().getTime();
-        let userId = 100;
+        let userId = JSON.parse(localStorage.getItem('userInfo')).openId;
 
         saveFinishedPraise(id,userId).then(res => {
             this.fetchData();
@@ -99,7 +99,7 @@ export default class TaskDetail extends Component{
         });
 
     }
-    fetchData(pageNumber = 1,rowsNumber = 100){
+    fetchData(pageNumber = 1,rowsNumber = 10){
         let taskSubjectId = this.props.match.params.id;
         let page = pageNumber;
         let rows = rowsNumber;
@@ -111,13 +111,13 @@ export default class TaskDetail extends Component{
                 numberList:res.rows,//this.state.numberList.concat(res.rows)
             })
         });
-        findTaskFinishedById(taskSubjectId).then(res => {
-            res = JSON.parse(res);
-            console.log('findTaskFinishedById',res);
-            this.setState({
-
-            })
-        });
+        // findTaskFinishedById(taskSubjectId).then(res => {
+        //     res = JSON.parse(res);
+        //     console.log('findTaskFinishedById',res);
+        //     this.setState({
+        //
+        //     })
+        // });
         findTaskSubjectById(taskSubjectId).then(res => {
             res = JSON.parse(res);
             console.log('findTaskSubjectById',res);

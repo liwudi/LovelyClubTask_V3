@@ -22,7 +22,7 @@ export default class MyTask extends Component{
     fetchData(){
         let content = this.state.taskContent;
         let taskSubjectId = 1;
-        let userId = 100;
+        let userId = localStorage.getItem('userInfo').openId;
         saveTaskFinished(content,taskSubjectId,userId).then(res => {
             console.log(res);
         })
@@ -37,9 +37,6 @@ export default class MyTask extends Component{
                 taskTitle: res.subject,
                 taskContent:res.content
             })
-        })
-        getUserInfo(document.getElementById("openId").value).then(res => {
-            alert('获取的用户信息',res);
         })
     }
     componentDidMount(){

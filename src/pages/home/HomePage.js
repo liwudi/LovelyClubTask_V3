@@ -24,11 +24,14 @@ class HomePage extends Component{
             tasks:[{
 
             }],
+
             connect:false,//推送提示相关
 
             isShowModal:false,
             //离开页面的时候要把关闭遮罩层
             currentIndex:0,
+
+            userInfo: localStorage.getItem('userInfo')
         }
     }
     itemEvent(index){
@@ -76,20 +79,25 @@ class HomePage extends Component{
         this.props.history.push(`/setTaskPage/${false}`);
     }
     gotoDetailEvent(index){
-
+        //alert(index);
         let id = this.state.tasks[index].id;
-
+        //alert(id);
         this.props.history.push(`/taskDetail/${id}`)
     }
-    fetchMoreData(){
-        getTaskSubjectList().then(res => {
+    fetchMoreData(next){
+
+        let rows = 10;
+        getTaskSubjectList(this.state.pageNumber+1,rows).then(res => {
             res = JSON.parse(res);
             this.setState({
                 total:res.total,
-                tasks:res.rows
+                tasks:this.state.tasks.concat(res.rows)
             },() => {
                 next && next();
             });
+        });
+        this.setState({
+            pageNumber: this.state.pageNumber + 1
         })
     }
     fetchData(next){
@@ -106,10 +114,10 @@ class HomePage extends Component{
     }
     componentDidMount(){
         this.fetchData();
-        alert(openId);
-        getUserInfo(openId).then(res => {
-            alert("获取的用户信息"+res);
-        })
+        // alert(openId);
+        // getUserInfo(openId).then(res => {
+        //     alert("获取的用户信息"+res);
+        // })
     }
 
     renderContent(){

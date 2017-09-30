@@ -17,14 +17,14 @@ function makeUrl(url) {
 
 }
 
-export function getTaskSubjectList() {
+export function getTaskSubjectList(page,rows) {
 
     return new Promise((resolve,reject) => {
         ajax({
             url:makeUrl('/task/getTaskSubjectList'),
             data:{
-                page:1,
-                rows:10
+                page:page || 1,
+                rows:rows || 10
             },
             method:'POST',
             success:function (res) {

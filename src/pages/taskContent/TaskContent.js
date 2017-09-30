@@ -35,7 +35,9 @@ class TaskContent extends Component{
     fetchData(){
         let content = this.state.inputValue;
         let taskSubjectId = Number(this.state.taskSubjectId) || 1;
-        let userId = 100;
+        //alert(localStorage.getItem('userInfo'));
+        let userId = JSON.parse(localStorage.getItem('userInfo')).openId;
+        //alert(userId);
         saveTaskFinished(content,taskSubjectId,userId,this.state.id).then(res => {
             console.log('saveTaskFinished',res);
             alert('成功的保存了作业，上传的id是'+this.state.id);
@@ -72,10 +74,11 @@ class TaskContent extends Component{
         if(this.props.match.params.taskSubjectId != 'false'){
             //在提交作业的情况下
             this.fetchData();
-        }else{
+        }else if(this.props.match.params.taskSubjectId == 'false'){
             //在布置作业的情况下
 
             this.props.dispatch(TaskActions.taskContent(this.state.inputValue));
+            this.props.dispatch(TaskActions.taskSubjectId(this.state.id));
             this.props.history.goBack();
         }
 
@@ -167,22 +170,45 @@ class TaskContent extends Component{
                 let serverId = res.serverId;
                 //this.isComplated = true;
                 alert('上传语音成功，关闭右边的对号，下面自动调用下载语音>>serverID'+serverId);
-
-
-                dloadVoice(serverId,_this.state.id).then(res => {
-                    alert('服务端已经下载好语音了')
-                    getVoiceByServerId(serverId).then(res => {
-                        //声音下载到本地
-                        alert("声音下载到本地"+res);
-                        res = JSON.parse(res);
-                        let url = serviceUrl + res.fullPath;
-                        _this.setState({
-                            willAddVoiceList:_this.state.willAddVoiceList.concat([url])
+                //分几种情况，在交作业情况下
+                if(_this.props.match.params.taskSubjectId != 'false'){
+                    finishTask()
+                }else if(_this.props.match.params.taskSubjectId == 'false'){//在布置作业情况下
+                     task();
+                }
+                function task() {
+                    taskSubject_dloadVoice(serverId,_this.state.id).then(res => {
+                        alert('服务端已经下载好语音了')
+                        getVoiceByServerId(serverId).then(res => {
+                            //声音下载到本地
+                            alert("声音下载到本地"+res);
+                            res = JSON.parse(res);
+                            let url = serviceUrl + res.fullPath;
+                            _this.setState({
+                                willAddVoiceList:_this.state.willAddVoiceList.concat([url])
+                            })
                         })
+                    }).catch(err=>{
+                        alert('发生错误>>'+err);
                     })
-                }).catch(err=>{
-                    alert('发生错误>>'+err);
-                })
+                }
+                function finishTask() {
+                    dloadVoice(serverId,_this.state.id).then(res => {
+                        alert('服务端已经下载好语音了')
+                        getVoiceByServerId(serverId).then(res => {
+                            //声音下载到本地
+                            alert("声音下载到本地"+res);
+                            res = JSON.parse(res);
+                            let url = serviceUrl + res.fullPath;
+                            _this.setState({
+                                willAddVoiceList:_this.state.willAddVoiceList.concat([url])
+                            })
+                        })
+                    }).catch(err=>{
+                        alert('发生错误>>'+err);
+                    })
+                }
+
             },
             fail: function (err) {
                 alert('上传语音失败'+err);
@@ -215,19 +241,42 @@ class TaskContent extends Component{
                                 upload();
                             }
                             let serverId = res.serverId;
+                            //交作业
+                            if(_this.props.match.params.taskSubjectId != 'false'){
+                                finishTask_img()
+                            }else if(_this.props.match.params.taskSubjectId == 'false'){
+                                //布置作业
+                                task_img();
+                            }
+                            function finishedTask_img() {
+                                dloadImg(serverId,_this.state.id).then(res => {
+                                    getImgByServerId(serverId).then(res => {
+                                        alert('获取图片成功')
+                                        res = JSON.parse(res);
+                                        let url = serviceUrl + res.fullPath;
+                                        _this.setState({
+                                            addImageList:_this.state.addImageList.concat([url])
+                                        });
+                                    }).catch(err => {
+                                        alert('没有下载到本>>>>'+err);
+                                    })
+                                });
+                            }
+                            function task_img(){
+                                taskSubject_dloadImg(serverId,_this.state.id).then(res => {
+                                    getImgByServerId(serverId).then(res => {
+                                        alert('获取图片成功')
+                                        res = JSON.parse(res);
+                                        let url = serviceUrl + res.fullPath;
+                                        _this.setState({
+                                            addImageList:_this.state.addImageList.concat([url])
+                                        });
+                                    }).catch(err => {
+                                        alert('没有下载到本>>>>'+err);
+                                    })
+                                });
+                            }
 
-                            dloadImg(serverId,_this.state.id).then(res => {
-                                getImgByServerId(serverId).then(res => {
-                                    alert('获取图片成功')
-                                    res = JSON.parse(res);
-                                    let url = serviceUrl + res.fullPath;
-                                    _this.setState({
-                                        addImageList:_this.state.addImageList.concat([url])
-                                    });
-                                }).catch(err => {
-                                    alert('没有下载到本>>>>'+err);
-                                })
-                            });
                         },
                         fail: function (res) {
                             alert('上传图片失败'+res);
@@ -251,24 +300,51 @@ class TaskContent extends Component{
             success: function (res) {
                 var serverId = res.serverId; // 返回图片的服务器端ID
                 //将上传的图片下载到本地服务器
+                if(_this.props.match.params.taskSubjectId != 'false'){
+                    //在提交作业的情况下
+                    finishTask();
+                }else if(_this.props.match.params.taskSubjectId == 'false'){
+                    //在布置作业情况下
+                    setTask();
+                }
+                function finishTask() {
+                    dloadImg(serverId,_this.state.id).then(res => {
+                        alert('后台已经从服务器上下载了图片');
+                        alert('此时再用serverId取服务端图片》》'+serverId);
+                        getImgByServerId(serverId).then(res => {
+                            //图片下载到本地
+                            res = JSON.parse(res);
+                            alert('下载到本地的图片路径>>>>>'+res.fullPath);
+                            let url = serviceUrl + res.fullPath;
 
-                dloadImg(serverId,_this.state.id).then(res => {
-                    alert('后台已经从服务器上下载了图片');
-                    alert('此时再用serverId取服务端图片》》'+serverId);
-                    getImgByServerId(serverId).then(res => {
-                        //图片下载到本地
-                        res = JSON.parse(res);
-                        alert('下载到本地的图片路径>>>>>'+res.fullPath);
-                        let url = serviceUrl + res.fullPath;
+                            alert(_this.state.addImageList.concat([url]));
+                            _this.setState({
+                                addImageList:_this.state.addImageList.concat([url])
+                            });
+                        }).catch(err => {
+                            alert('没有下载到本>>>>'+err);
+                        })
+                    });
+                }
+                function setTask() {
+                    dloadImg(serverId,_this.state.id).then(res => {
+                        alert('后台已经从服务器上下载了图片');
+                        alert('此时再用serverId取服务端图片》》'+serverId);
+                        getImgByServerId(serverId).then(res => {
+                            //图片下载到本地
+                            res = JSON.parse(res);
+                            alert('下载到本地的图片路径>>>>>'+res.fullPath);
+                            let url = serviceUrl + res.fullPath;
 
-                        alert(_this.state.addImageList.concat([url]));
-                        _this.setState({
-                            addImageList:_this.state.addImageList.concat([url])
-                        });
-                    }).catch(err => {
-                        alert('没有下载到本>>>>'+err);
-                    })
-                });
+                            alert(_this.state.addImageList.concat([url]));
+                            _this.setState({
+                                addImageList:_this.state.addImageList.concat([url])
+                            });
+                        }).catch(err => {
+                            alert('没有下载到本>>>>'+err);
+                        })
+                    });
+                }
             }
         });
     }

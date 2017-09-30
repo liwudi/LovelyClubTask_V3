@@ -32,21 +32,25 @@ class SetTaskPage extends Component{
     }
     getCardEvent(){
         let id = this.props.taskStore.taskId;
-        let userid = 123;
+        let userid = JSON.parse(localStorage.getItem('userInfo')).openId;
         let subject = this.props.taskStore.taskTitle || this.state.taskTitle;
         let content = this.props.taskStore.taskContent || this.state.taskContent;
-
+        let ids = this.props.taskStore.taskSubjectId || this.state.taskSubjectId;
         this.isGetFromEdit() && updateTaskSubject(subject,content,id,userid).then(res => {
             this.props.history.goBack();
         });
-        !this.isGetFromEdit() && saveTaskSubject(subject,content,userid).then(res => {
+        alert('这时候需要上传的负值id'+ids);
+        !this.isGetFromEdit() && saveTaskSubject(subject,content,userid,ids).then(res => {
             console.log('saveTaskSubject',res);
-            this.props.history.push('/taskCard')
+            this.props.history.push(`/taskCard/{false}`);
         });
     }
+
+    /**
+     * @info:目前这个切换的tab是没用的
+     */
     changeStateEvent(){
         return;
-
         this.setState({
             isChecked:!this.state.isChecked
         })
@@ -86,8 +90,8 @@ class SetTaskPage extends Component{
     }
 
     componentDidMount(){
-        //alert(1);
-        this.isGetFromEdit() && this.fetchData();
+        alert('初始的那个负值',this.props.taskStore.taskSubjectId);
+        this.isGetFromEdit() && this.fetchData();//来自编辑的界面的话，还是需要获取额外的数据的
     }
 
     renderTab(){
