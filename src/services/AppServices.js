@@ -324,64 +324,7 @@ export function deleteFinishedPraise(id) {
     })
 }
 
-//作业题目-下载声音
-export function taskSubject_dloadVoice(serverId,taskSubjectId) {
-    return new Promise((resolve,reject) => {
-        ajax({
-            url:makeUrl('/task/dloadVoice'),
-            data:{
-                serverId,
-                taskSubjectId
-            },
-            method:'GET',
-            success:function (res) {
-                resolve(res);
-            },
-            fail:function (err) {
-                reject(err);
-            }
-        })
-    })
-}
-//作业题目-下载图片
-export function taskSubject_dloadImg(serverId,taskSubjectId) {
-    return new Promise((resolve,reject) => {
-        ajax({
-            url:makeUrl('/task/dloadImg'),
-            data:{
-                serverId,
-                taskSubjectId
-            },
-            method:'GET',
-            success:function (res) {
-                resolve(res);
-            },
-            fail:function (err) {
-                reject(err);
-            }
-        })
-    })
-}
-//作业结果-下载声音
-export function dloadVoice(serverId,taskFinishedId) {
-    return new Promise((resolve,reject) => {
-        ajax({
-            url:makeUrl('/task/dloadVoice'),
-            data:{
-                serverId,
-                taskFinishedId
-            },
-            method:'GET',
-            success:function (res) {
-                resolve(res);
-            },
-            fail:function (err) {
-                reject(err);
-            }
 
-        })
-    })
-}
 //作业结果-下载图片
 export function dloadImg(serverId,taskFinishedId) {
     return new Promise((resolve,reject) => {
@@ -402,6 +345,28 @@ export function dloadImg(serverId,taskFinishedId) {
         })
     })
 }
+
+//作业结果-下载声音
+export function dloadVoice(serverId,taskFinishedId) {
+    return new Promise((resolve,reject) => {
+        ajax({
+            url:makeUrl('/task/dloadVoice'),
+            data:{
+                serverId,
+                taskFinishedId
+            },
+            method:'GET',
+            success:function (res) {
+                resolve(res);
+            },
+            fail:function (err) {
+                reject(err);
+            }
+
+        })
+    })
+}
+
 
 export function getVoiceByServerId(serverId) {
     return new Promise((resolve,reject) => {

@@ -38,3 +38,25 @@ d、作业卡功效
 
 
 二、萌咖天天作业页面分析。
+A、taskContent界面梳理
+有四个入口进入taskContent界面，分别是：老师布置作业、老师编辑作业、学生交作业、学生编辑作业。
+
+通过传入的参数type分别进行逻辑处理。
+
+主要的功能是：图片处理、语音处理、taskContent处理
+相关接口有6个：dloadVoice,dloadImg,getVoiceByServerId,getImgByServerId,taskSubject_dloadVoice,taskSubject_dloadImg
+
+编辑作业（老师、学生）会从父页面传递一个（taskSubjectId、taskFinishedId），图片处理、语音处理需要根据这个id进行上传等相应操作。
+而老师布置作业、学生交作业需要自动生成一个id，进行图片处理、语音处理等操作。
+
+task相关操作要通过redux(对id以及)进行数据控制，把id上传给父页面，父页面进行saveTask以及updateTask操作。（对于这个id，saveTask是一个负值，而upDateTask是一个正值);
+
+B、setTaskPage界面梳理
+
+界面入口有两个：布置作业入口、编辑作业入口。
+
+通过redux接受子页面的（id以及输入内容）。
+
+通过不同的界面入口，给子页面传递不同的内容。
+
+C、作业卡页面梳理。（两个入口，必须获得taskSubjectId）。

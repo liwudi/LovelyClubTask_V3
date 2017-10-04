@@ -15,7 +15,7 @@ import {
     TYPES,
     TaskActions
 } from '../../actions/index';
-import { saveTaskFinished,dloadVoice,dloadImg,getVoiceByServerId,getImgByServerId,taskSubject_dloadVoice,taskSubject_dloadImg } from '../../services/AppServices';
+import { findTaskSubjectById,saveTaskFinished,dloadVoice,dloadImg,getVoiceByServerId,getImgByServerId,taskSubject_dloadVoice,taskSubject_dloadImg } from '../../services/AppServices';
 
 
 import serverConfig from '../../config';
@@ -26,12 +26,84 @@ class TaskContent extends Component{
         super(props);
         this.state = {
             tasks:[],
-            taskSubjectId: props.match.params.taskSubjectId,
+            taskSubjectId: JSON.parse(props.match.params.taskSubjectId).taskSubjectId,
             willAddVoiceList:[],
             addImageList:[],
             id: -(Math.floor(Math.random()*100000)+10000)
         }
     }
+    componentDidMount(){
+        this.initTeacherEditData();
+        this.initStudentsEditData();
+    }
+    initTeacherEditData(){
+        let str = this.props.match.params.taskSubjectId;
+        let type = JSON.parse(str).type;
+        if(type == 3){
+            let taskSubjectId = JSON.parse(str).taskId;
+            this.setState({
+                id:taskSubjectId
+            });
+            findTaskSubjectById(taskSubjectId).then(res => {
+                res = JSON.parse(res);
+                console.log('findTaskSubjectById',res);
+                this.setState({
+                    // taskTitle:res.subject,
+                    // taskContent:res.content,
+                    // taskPicsList: res.taskPicsList,
+                    // taskVoiceList: res.taskVoiceList,
+                    willAddVoiceList:res.taskVoiceList,
+                    addImageList:res.taskPicsList,
+                })
+            });
+        }else{
+            return
+        }
+    }
+    initStudentsEditData(){
+        let str = this.props.match.params.taskSubjectId;
+        let type = JSON.parse(str).type;
+        if(type == 4){
+            let taskFinishedId = JSON.parse(str).taskFinishedId;
+            this.setState({
+                id:taskFinishedId
+            });
+        }
+    }
+
+
+
+
+    /**
+     * @这个goback的难点在作业的入口有几个？
+     * 1、学生交作业是一个入口
+     * 2、老师布置作业，编辑作业内容的时候算一个入口。
+     * 3、学生编辑已经提交的作业。
+     * 4、老师编辑已经布置的作业。
+     *
+     */
+    goBack(){
+        let str = this.props.match.params.taskSubjectId;
+        str = JSON.parse(str);
+
+        if(str.type == 3){
+            alert('老师编辑作业')
+            //在提交作业的情况下
+            this.teacherEditTask();
+        }else if(str.type == 1){
+            //在布置作业的情况下
+            alert('老师布置作业的情况')
+            this.teacherSetTask();
+        }else if(str.type == 2){
+            alert('学生提交作业的情况')
+            //在提交作业的情况下
+            this.fetchData();
+        }else if(str.type == 4){
+            alert("学生编辑作业")
+        }
+
+    }
+    //学生交作业
     fetchData(){
         let content = this.state.inputValue;
         let taskSubjectId = Number(this.state.taskSubjectId) || 1;
@@ -52,37 +124,32 @@ class TaskContent extends Component{
             })
         })
     }
-    renderContent(){
-        return (
-            <div>
-                <textarea onChange={(e)=>{this.setState({inputValue:e.target.value})}} placeholder="请输入作业内容" className="textArea"></textarea>
-            </div>
-        )
+    //老师编辑作业
+    teacherEditTask(){
+        let str = this.props.match.params.taskSubjectId;
+        str = JSON.parse(str);
+        let taskSubjectId = str.taskId;
+        this.props.dispatch(TaskActions.taskContent(this.state.inputValue));
+        this.props.dispatch(TaskActions.taskSubjectId(taskSubjectId));
+        this.props.history.goBack();
+    }
+    //老师布置作业
+    teacherSetTask(){
+        this.props.dispatch(TaskActions.taskContent(this.state.inputValue));
+        this.props.dispatch(TaskActions.taskSubjectId(this.state.id));
+        alert('进行dispatch>>'+this.state.id);
+        this.props.history.goBack();
     }
 
-    /**
-     * @这个goback的难点在作业的入口有几个？
-     * 1、学生交作业是一个入口
-     * 2、老师布置作业，编辑作业内容的时候算一个入口。
-     * 3、学生编辑已经提交的作业。
-     * 4、老师编辑已经布置的作业。
-     *
-     */
-    goBack(){
-        console.log(this.props.match.params.taskSubjectId);
 
-        if(this.props.match.params.taskSubjectId != 'false'){
-            //在提交作业的情况下
-            this.fetchData();
-        }else if(this.props.match.params.taskSubjectId == 'false'){
-            //在布置作业的情况下
 
-            this.props.dispatch(TaskActions.taskContent(this.state.inputValue));
-            this.props.dispatch(TaskActions.taskSubjectId(this.state.id));
-            this.props.history.goBack();
-        }
 
-    }
+
+
+
+
+
+    //录音
     addVoice(){
         let _this = this;
         //this.isComplated = false;
@@ -138,7 +205,6 @@ class TaskContent extends Component{
         let taskFinishedId = '1';
         wx.stopRecord({
             success: function (res) {
-                //_this.isRecording = false;
                 _this.localId = res.localId;
                 _this.setState({
                     isRecording: false,
@@ -149,8 +215,6 @@ class TaskContent extends Component{
                 alert("录音结束EndEvent>>"+_this.localId);
                 //Todo:上传语音id得到serverId
                 //_this.upLoadVoice(localId,taskFinishedId);
-
-
             },
             fail: function (err) {
                 alert("录音结束EndEvent>>"+err);
@@ -158,46 +222,26 @@ class TaskContent extends Component{
             }
         });
     }
-    upLoadVoice(){
-        alert('录音结束了，开始长传语音')
-        let _this = this;
-        alert('当前上传的localId>>'+_this.localId);
-        alert('当前上传localId>>的类型'+(typeof _this.localId));
 
+    upLoadVoice(){
+        let _this = this;
+        let type = JSON.parse(_this.props.match.params.taskSubjectId).type;
         wx.uploadVoice({
             localId:_this.localId+"",
             success: function (res) {
                 let serverId = res.serverId;
-                //this.isComplated = true;
-                alert('上传语音成功，关闭右边的对号，下面自动调用下载语音>>serverID'+serverId);
-                //分几种情况，在交作业情况下
-                if(_this.props.match.params.taskSubjectId != 'false'){
-                    finishTask()
-                }else if(_this.props.match.params.taskSubjectId == 'false'){//在布置作业情况下
-                     task();
+                alert('上传语音成功，下面自动调用下载语音>>serverID'+serverId);
+                let id = _this.state.id;
+                if(type == 2){//在交作业的情况下
+                    finishTask();
+                }else if(type == 1){//在布置作业情况下
+                    finishTask();
                 }
-                function task() {
-                    taskSubject_dloadVoice(serverId,_this.state.id).then(res => {
-                        alert('服务端已经下载好语音了')
-                        getVoiceByServerId(serverId).then(res => {
-                            //声音下载到本地
-                            alert("声音下载到本地"+res);
-                            res = JSON.parse(res);
-                            let url = serviceUrl + res.fullPath;
-                            _this.setState({
-                                willAddVoiceList:_this.state.willAddVoiceList.concat([url])
-                            })
-                        })
-                    }).catch(err=>{
-                        alert('发生错误>>'+err);
-                    })
-                }
+
                 function finishTask() {
                     dloadVoice(serverId,_this.state.id).then(res => {
                         alert('服务端已经下载好语音了')
                         getVoiceByServerId(serverId).then(res => {
-                            //声音下载到本地
-                            alert("声音下载到本地"+res);
                             res = JSON.parse(res);
                             let url = serviceUrl + res.fullPath;
                             _this.setState({
@@ -215,15 +259,46 @@ class TaskContent extends Component{
             }
         })
     }
-    addPicEvent(){
+    taskVoice(serverId,id){
+        let _this = this;
+        dloadVoice(serverId,id).then(res => {
+            getVoiceByServerId(serverId).then(res => {
+                //声音下载到本地
+                res = JSON.parse(res);
+                let url = serviceUrl + res.fullPath;
+                _this.setState({
+                    willAddVoiceList:_this.state.willAddVoiceList.concat([url])
+                })
+            })
+        }).catch(err=>{
+            alert('发生错误>>'+err);
+        })
+    }
+    taskImg(serverId,id){
+        let _this = this;
+        dloadImg(serverId,_this.state.id).then(res => {
+            getImgByServerId(serverId).then(res => {
+                //图片下载到本地
+                res = JSON.parse(res);
+                let url = serviceUrl + res.fullPath;
+                _this.setState({
+                    addImageList:_this.state.addImageList.concat([url])
+                });
+            }).catch(err => {
+                alert('没有下载到本>>>>'+err);
+            })
+        });
+    }
 
+    addPicEvent(){
         this.chooseImage();
     }
     chooseImage(){
         let _this = this;
+        let type = JSON.parse(_this.props.match.params.taskSubjectId).type;
         wx.chooseImage({
             success: function (res) {
-
+                alert('选择图片成功')
                 let localIds = res.localIds;
 
                 let i = 0, length = localIds.length;
@@ -242,9 +317,9 @@ class TaskContent extends Component{
                             }
                             let serverId = res.serverId;
                             //交作业
-                            if(_this.props.match.params.taskSubjectId != 'false'){
-                                finishTask_img()
-                            }else if(_this.props.match.params.taskSubjectId == 'false'){
+                            if(type == 2){
+                                finishedTask_img()
+                            }else if(type == 1){
                                 //布置作业
                                 task_img();
                             }
@@ -284,6 +359,7 @@ class TaskContent extends Component{
                     })
                 }
                 let localId = localIds.toString();
+                alert('localId>>'+localId);
                 _this.upLoadImage(localId);
             },
             fail: function (err) {
@@ -294,42 +370,25 @@ class TaskContent extends Component{
 
     upLoadImage(localId){
         let _this = this;
+        alert(_this.props.match.params.taskSubjectId)
+        let type = JSON.parse(_this.props.match.params.taskSubjectId).type;
+
         wx.uploadImage({
             localId: localId, // 需要上传的图片的本地ID，由chooseImage接口获得
             isShowProgressTips: 1, // 默认为1，显示进度提示
             success: function (res) {
                 var serverId = res.serverId; // 返回图片的服务器端ID
                 //将上传的图片下载到本地服务器
-                if(_this.props.match.params.taskSubjectId != 'false'){
+                if(type == 2){
                     //在提交作业的情况下
                     finishTask();
-                }else if(_this.props.match.params.taskSubjectId == 'false'){
+                }else if(type == 1){
                     //在布置作业情况下
-                    setTask();
+                    alert('upload sucess')
+                    finishTask();
                 }
                 function finishTask() {
                     dloadImg(serverId,_this.state.id).then(res => {
-                        alert('后台已经从服务器上下载了图片');
-                        alert('此时再用serverId取服务端图片》》'+serverId);
-                        getImgByServerId(serverId).then(res => {
-                            //图片下载到本地
-                            res = JSON.parse(res);
-                            alert('下载到本地的图片路径>>>>>'+res.fullPath);
-                            let url = serviceUrl + res.fullPath;
-
-                            alert(_this.state.addImageList.concat([url]));
-                            _this.setState({
-                                addImageList:_this.state.addImageList.concat([url])
-                            });
-                        }).catch(err => {
-                            alert('没有下载到本>>>>'+err);
-                        })
-                    });
-                }
-                function setTask() {
-                    dloadImg(serverId,_this.state.id).then(res => {
-                        alert('后台已经从服务器上下载了图片');
-                        alert('此时再用serverId取服务端图片》》'+serverId);
                         getImgByServerId(serverId).then(res => {
                             //图片下载到本地
                             res = JSON.parse(res);
@@ -348,7 +407,13 @@ class TaskContent extends Component{
             }
         });
     }
-
+    renderContent(){
+        return (
+            <div>
+                <textarea onChange={(e)=>{this.setState({inputValue:e.target.value})}} placeholder="请输入作业内容" className="textArea"></textarea>
+            </div>
+        )
+    }
     render(){
         return(
             <div className="pageBox">

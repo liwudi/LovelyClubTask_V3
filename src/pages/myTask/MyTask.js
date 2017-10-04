@@ -42,6 +42,11 @@ export default class MyTask extends Component{
     componentDidMount(){
         this.fetchData1();
     }
+    gotoTaskContent(){
+        let str = JSON.stringify({type:2,taskSubjectId:this.state.taskSubjectId});
+
+        this.props.history.push(`/taskContent/${str}`)
+    }
     render(){
         return (
             <div className="pageBox">
@@ -64,7 +69,7 @@ export default class MyTask extends Component{
                     </div>
 
                     <div className="center marginTop">
-                        <Button onClick={()=>this.props.history.push(`/taskContent/${this.state.taskSubjectId}`)} title="交作业" style={{width:"100px",height:"35px"}} />
+                        <Button onClick={()=>this.gotoTaskContent()} title="交作业" style={{width:"100px",height:"35px"}} />
                     </div>
                 </div>
             </div>

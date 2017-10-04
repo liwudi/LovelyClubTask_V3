@@ -12,6 +12,7 @@ import TaskContent from './taskContent/TaskContent';
 import RelatedCoursePage from './relatedCourses/RelatedCoursePage';
 import TaskCardPage from './taskCard/TaskCardPage';
 import TaskDetailPage from './taskDetail/taskDetailPage';
+import EditTask from './editTask/EditTask';
 
 import MyTask from './myTask/MyTask';
 const history = createBrowserHistory;
@@ -30,7 +31,7 @@ export default class Main extends Component{
                         <Route path="/relatedCourses" component={RelatedCoursePage} />
                         <Route path="/taskCard/:taskId" component={TaskCardPage} />
                         <Route path="/taskDetail/:id" component={TaskDetailPage} />
-
+                        <Route path="/editTask/:type" component={EditTask} />
                         <Route path="/mytask/:taskId" component={MyTask} />
                         <Route path="/" component={Entry}/>
                     </Switch>

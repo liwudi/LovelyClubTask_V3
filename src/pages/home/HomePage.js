@@ -91,14 +91,12 @@ class HomePage extends Component{
             res = JSON.parse(res);
             this.setState({
                 total:res.total,
-                tasks:this.state.tasks.concat(res.rows)
+                tasks:this.state.tasks.concat(res.rows),
+                pageNumber: this.state.pageNumber + 1
             },() => {
                 next && next();
             });
         });
-        this.setState({
-            pageNumber: this.state.pageNumber + 1
-        })
     }
     fetchData(next){
         getTaskSubjectList().then(res=>{
@@ -130,7 +128,7 @@ class HomePage extends Component{
             )
         }else{
             return (
-                <div style={{width:"100%",height:"100%"}}>
+                <div className="fx1 fix fxColumn" style={{width:"100%",height:"100%"}}>
                     {
                         this.state.tasks.map((item,index) => {
                             return (
@@ -194,7 +192,7 @@ class HomePage extends Component{
         return(
             <div className="pageBox" style={{position:'relative'}}>
                 <TopBanner title="作业管理" router={this.props.history} />
-                <div className="fx1 fix boxSizing center" style={{overflow:'auto',borderTop:'1px solid #cccccc'}}>
+                <div className="fx1 boxSizing center" style={{overflow:'auto',borderTop:'1px solid #cccccc'}}>
                     {
                         this.renderContent()
                     }

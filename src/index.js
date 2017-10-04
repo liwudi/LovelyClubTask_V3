@@ -16,7 +16,7 @@ const store = createStore(rootReducers,
     applyMiddleware(thunkMiddleware)
 );
 import Main from './pages/Main';
-//import './getUserInfo';
+import './getUserInfo';
 /**
  * @todo:目前getUserInfo是由异步的操作的。
  */

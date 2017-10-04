@@ -1,48 +1,40 @@
 /**
- * Created by mapbar_front on 2017/9/5.
+ * Created by mapbar_front on 2017/10/3.
  */
 import React,{ Component } from 'react';
 import { connect } from 'react-redux';
-import { BrowserRouter as Router, Link, Route} from 'react-router-dom';
 import '../../css/common.css';
 import '../../css/setTaskPage.css';
 import TopBanner from '../../components/TopBanner';
-import NewTask from '../../components/NewTask';
 import Modal from '../../components/Modal';
 
 import ViewForRightArrow from '../../components/ViewForRightArrow';
 
-import { findTaskSubjectById,saveTaskSubject,updateTaskSubject } from '../../services/AppServices';
+import { updateTaskSubject } from '../../services/AppServices';
 
 
-import {
-    TYPES,
-    TaskActions
-} from '../../actions/index';
-class SetTaskPage extends Component{
+export default class EditTask extends Component{
     constructor(props){
         super(props);
         this.state = {
-            taskTitle:props.taskStore.taskTitle,
-            taskSubjectId:props.taskStore.taskSubjectId,
+            taskTitle:'',
+            taskSubjectId:'',
             isChecked:false,
             isShowModal:false,
-            taskContent:props.taskStore.taskContent
+            taskContent:''
         }
     }
     getCardEvent(){
-        //alert(1);
         let id = this.props.taskStore.taskId;
-        let userid = localStorage.getItem('userInfo') && JSON.parse(localStorage.getItem('userInfo')).openId || 123;
+        let userid = JSON.parse(localStorage.getItem('userInfo')).openId;
         let subject = this.props.taskStore.taskTitle || this.state.taskTitle;
         let content = this.props.taskStore.taskContent || this.state.taskContent;
         let ids = this.props.taskStore.taskSubjectId || this.state.taskSubjectId;
         //更新作业题目，id是正值。
-        alert('this.isGetFromEdit()'+this.isGetFromEdit());
         this.isGetFromEdit() && updateTaskSubject(subject,content,id,userid).then(res => {
             this.props.history.goBack();
         });
-        alert('ids>>'+ids);
+        alert('这时候需要上传的负值id'+ids);
         //布置作业题目获取作业卡，id是负值
         !this.isGetFromEdit() && saveTaskSubject(subject,content,userid,ids).then(res => {
             console.log('saveTaskSubject',res);
@@ -50,82 +42,9 @@ class SetTaskPage extends Component{
         });
     }
 
-    /**
-     * @info:目前这个切换的tab是没用的
-     */
-    changeStateEvent(){
-        return;
-        this.setState({
-            isChecked:!this.state.isChecked
-        })
-    }
-    isGetFromEdit(){
-        console.log(this.props.match.params.isEditPage);
-        if(this.props.match.params.isEditPage === 'true'){
-            return true
-        }else{
-            return false
-        }
-        //return Boolean(this.props.match.params.isEditPage);
-    }
-    gotoTaskContent(){
-        let content = this.props.taskStore.taskContent || this.state.taskContent;
-        //this.props.history.push(`/taskContent/${false}`);
-        let editString = JSON.stringify({type:3,taskId:this.props.taskStore.taskId,taskContent:content});
-        let notEditString = JSON.stringify({type:1});
 
-        this.isGetFromEdit() && this.props.history.push(`/taskContent/${editString}`);
-        !this.isGetFromEdit() && this.props.history.push(`/taskContent/${notEditString}`);
-    }
-    confirmEvent() {
-        const dealInput = (value) => {
-            this.props.dispatch(TaskActions.taskTitle(value));
-            this.setState({
-                isShowModal:false
-            })
-        };
-        this.state.inputValue && dealInput(this.state.inputValue);
-    }
-    cancelEvent(){
-        this.setState({isShowModal:false})
-    }
-    fetchData(){
 
-        findTaskSubjectById(this.props.taskStore.taskId).then(res => {
-            console.log('获取的数据',res);
-            res = JSON.parse(res);
-            //this.props.dispatch(TaskActions.taskTitle(res.subject));
-            this.setState({
-                taskTitle:res.subject,
-                taskContent:res.content
-            })
-        })
-    }
 
-    componentDidMount(){
-        this.isGetFromEdit() && this.fetchData();//来自编辑的界面的话，还是需要获取额外的数据的
-    }
-
-    renderTab(){
-        if(this.state.isChecked){
-            return (
-                <div className="center" onClick={()=>this.changeStateEvent()}>
-                    <div className="switchChecked">
-                        <div className="switchCicleChecked"></div>
-                    </div>
-                </div>
-            )
-        }else{
-            return (
-                <div className="center" onClick={()=>this.changeStateEvent()}>
-                    <div className="switch">
-                        <div className="switchCicle"></div>
-                    </div>
-                </div>
-            )
-        }
-
-    }
 
 
     render(){
@@ -159,7 +78,7 @@ class SetTaskPage extends Component{
                         />
                         <ViewForRightArrow
                             title='作业内容'
-                            onClick={()=>{this.gotoTaskContent()}}
+                            onClick={()=>{this.props.history.push(`/taskContent/${false}`)}}
                             rightView={()=>_rightViewContent()}
                             style={{justifyContent:'space-between'}}
                         />
@@ -174,7 +93,6 @@ class SetTaskPage extends Component{
                         <ViewForRightArrow
                             title='仅课程报名者可交作业'
                             style={{justifyContent:'space-between'}}
-                            rightView={()=>this.renderTab()}
                         />
                     </div>
                 </div>
@@ -183,7 +101,7 @@ class SetTaskPage extends Component{
                         className="bigBtn center bgred"
 
                         onClick={()=>{this.getCardEvent()}}
-                    >保存并且获取作业卡</div>
+                    >保存</div>
                 </div>
                 {
                     this.state.isShowModal ?
@@ -200,10 +118,3 @@ class SetTaskPage extends Component{
         )
     }
 }
-
-export default connect((store)=>{
-    console.log(store);
-    return {
-        taskStore:store.taskStore
-    }
-})(SetTaskPage)
