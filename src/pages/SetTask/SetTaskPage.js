@@ -3,11 +3,9 @@
  */
 import React,{ Component } from 'react';
 import { connect } from 'react-redux';
-import { BrowserRouter as Router, Link, Route} from 'react-router-dom';
 import '../../css/common.css';
 import '../../css/setTaskPage.css';
 import TopBanner from '../../components/TopBanner';
-import NewTask from '../../components/NewTask';
 import Modal from '../../components/Modal';
 
 import ViewForRightArrow from '../../components/ViewForRightArrow';
@@ -31,20 +29,20 @@ class SetTaskPage extends Component{
         }
     }
     getCardEvent(){
-        //alert(1);
-        let id = this.props.taskStore.taskId;
+
+        let id = this.props.taskStore.taskId;//这个是taskId，代表的编辑作业的taskSubjectId，代表的是布置作业的那个dispatch的负值
         let userid = localStorage.getItem('userInfo') && JSON.parse(localStorage.getItem('userInfo')).openId || 123;
         let subject = this.props.taskStore.taskTitle || this.state.taskTitle;
         let content = this.props.taskStore.taskContent || this.state.taskContent;
-        let ids = this.props.taskStore.taskSubjectId || this.state.taskSubjectId;
+        let ids = this.props.taskStore.taskSubjectId || this.state.taskSubjectId;//这个
         //更新作业题目，id是正值。
         alert('this.isGetFromEdit()'+this.isGetFromEdit());
         this.isGetFromEdit() && updateTaskSubject(subject,content,id,userid).then(res => {
             this.props.history.goBack();
         });
-        alert('ids>>'+ids);
+        alert('id'+id);
         //布置作业题目获取作业卡，id是负值
-        !this.isGetFromEdit() && saveTaskSubject(subject,content,userid,ids).then(res => {
+        !this.isGetFromEdit() && saveTaskSubject(subject,content,userid,id).then(res => {
             console.log('saveTaskSubject',res);
             this.props.history.push(`/taskCard/{false}`);
         });

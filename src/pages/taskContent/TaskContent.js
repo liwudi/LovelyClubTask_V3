@@ -15,7 +15,7 @@ import {
     TYPES,
     TaskActions
 } from '../../actions/index';
-import { findTaskSubjectById,saveTaskFinished,dloadVoice,dloadImg,getVoiceByServerId,getImgByServerId,taskSubject_dloadVoice,taskSubject_dloadImg } from '../../services/AppServices';
+import { findTaskSubjectById,saveTaskFinished,dloadVoice,dloadImg,task_dloadImg,task_dloadVoice,getVoiceByServerId,getImgByServerId,taskSubject_dloadVoice,taskSubject_dloadImg } from '../../services/AppServices';
 
 
 import serverConfig from '../../config';
@@ -26,7 +26,7 @@ class TaskContent extends Component{
         super(props);
         this.state = {
             tasks:[],
-            taskSubjectId: JSON.parse(props.match.params.taskSubjectId).taskSubjectId,
+            taskSubjectId: JSON.parse(props.match.params.taskSubjectId).taskSubjectId,//这个记录的是学生交作业的课程id
             willAddVoiceList:[],
             addImageList:[],
             id: -(Math.floor(Math.random()*100000)+10000)
@@ -128,22 +128,18 @@ class TaskContent extends Component{
     teacherEditTask(){
         let str = this.props.match.params.taskSubjectId;
         str = JSON.parse(str);
-        let taskSubjectId = str.taskId;
+        let taskSubjectId = str.taskId;//上个页面传递的taskSubjectId，但是taskSubjectId被交作业的taskSubjectId占用。
         this.props.dispatch(TaskActions.taskContent(this.state.inputValue));
-        this.props.dispatch(TaskActions.taskSubjectId(taskSubjectId));
+        this.props.dispatch(TaskActions.taskId(taskSubjectId));
         this.props.history.goBack();
     }
     //老师布置作业
     teacherSetTask(){
         this.props.dispatch(TaskActions.taskContent(this.state.inputValue));
-        this.props.dispatch(TaskActions.taskSubjectId(this.state.id));
+        this.props.dispatch(TaskActions.taskId(this.state.id));
         alert('进行dispatch>>'+this.state.id);
         this.props.history.goBack();
     }
-
-
-
-
 
 
 
@@ -235,11 +231,25 @@ class TaskContent extends Component{
                 if(type == 2){//在交作业的情况下
                     finishTask();
                 }else if(type == 1){//在布置作业情况下
-                    finishTask();
+                    task_finishTask();
                 }
 
                 function finishTask() {
                     dloadVoice(serverId,_this.state.id).then(res => {
+                        alert('服务端已经下载好语音了')
+                        getVoiceByServerId(serverId).then(res => {
+                            res = JSON.parse(res);
+                            let url = serviceUrl + res.fullPath;
+                            _this.setState({
+                                willAddVoiceList:_this.state.willAddVoiceList.concat([url])
+                            })
+                        })
+                    }).catch(err=>{
+                        alert('发生错误>>'+err);
+                    })
+                }
+                function task_finishTask() {
+                    task_dloadVoice(serverId,_this.state.id).then(res => {
                         alert('服务端已经下载好语音了')
                         getVoiceByServerId(serverId).then(res => {
                             res = JSON.parse(res);
@@ -359,7 +369,6 @@ class TaskContent extends Component{
                     })
                 }
                 let localId = localIds.toString();
-                alert('localId>>'+localId);
                 _this.upLoadImage(localId);
             },
             fail: function (err) {
@@ -379,13 +388,14 @@ class TaskContent extends Component{
             success: function (res) {
                 var serverId = res.serverId; // 返回图片的服务器端ID
                 //将上传的图片下载到本地服务器
+                alert("type="+type);
                 if(type == 2){
                     //在提交作业的情况下
                     finishTask();
                 }else if(type == 1){
                     //在布置作业情况下
                     alert('upload sucess')
-                    finishTask();
+                    task_finishTask();
                 }
                 function finishTask() {
                     dloadImg(serverId,_this.state.id).then(res => {
@@ -403,6 +413,21 @@ class TaskContent extends Component{
                             alert('没有下载到本>>>>'+err);
                         })
                     });
+                }
+                function task_finishTask() {
+                    alert("执行task_finishTask");
+                    task_dloadImg(serverId,_this.state.id).then(res => {
+                        alert('服务端已经下载好图片了')
+                        getImgByServerId(serverId).then(res => {
+                            res = JSON.parse(res);
+                            let url = serviceUrl + res.fullPath;
+                            _this.setState({
+                                addImageList:_this.state.addImageList.concat([url])
+                            })
+                        })
+                    }).catch(err=>{
+                        alert('发生错误>>'+err);
+                    })
                 }
             }
         });

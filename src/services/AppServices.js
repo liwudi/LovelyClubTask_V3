@@ -80,17 +80,6 @@ export function updateTaskSubject(subject,content,id,userId) {
 
         })
     });
-    // return RequestService.post(
-    //     makeUrl('/deleteTaskSubject'),
-    //     {
-    //         subjectId: subjectId
-    //     }
-    // );
-    // return Promise.resolve({
-    //     "errorCode": "success",
-    //     "errorMsg": null,
-    //     "result": null
-    // })
 }
 export function deleteTaskSubject(subjectId) {
     return new Promise((resolve,reject) => {
@@ -109,27 +98,17 @@ export function deleteTaskSubject(subjectId) {
 
         })
     });
-    // return RequestService.post(
-    //     makeUrl('/deleteTaskSubject'),
-    //     {
-    //         subjectId: subjectId
-    //     }
-    // );
-    // return Promise.resolve({
-    //     "errorCode": "success",
-    //     "errorMsg": null,
-    //     "result": null
-    // })
 }
 
-export function saveTaskSubject(subject,content,userid) {
+export function saveTaskSubject(subject,content,userid,id) {
     return new Promise((resolve,reject) => {
         ajax({
             url:makeUrl('/task/saveTaskSubject'),
             data:{
                 subject,
                 content,
-                userid
+                userid,
+                id
             },
             method:'POST',
             success:function (res) {
@@ -368,6 +347,48 @@ export function dloadVoice(serverId,taskFinishedId) {
 }
 
 
+export function task_dloadImg(serverId,taskSubjectId) {
+    return new Promise((resolve,reject) => {
+        ajax({
+            url:makeUrl('/task/dloadImg'),
+            data:{
+                serverId,
+                taskSubjectId
+            },
+            method:'GET',
+            success:function (res) {
+                resolve(res);
+            },
+            fail:function (err) {
+                reject(err);
+            }
+
+        })
+    })
+}
+
+
+export function task_dloadVoice(serverId,taskSubjectId) {
+    return new Promise((resolve,reject) => {
+        ajax({
+            url:makeUrl('/task/dloadVoice'),
+            data:{
+                serverId,
+                taskSubjectId
+            },
+            method:'GET',
+            success:function (res) {
+                resolve(res);
+            },
+            fail:function (err) {
+                reject(err);
+            }
+
+        })
+    })
+}
+
+
 export function getVoiceByServerId(serverId) {
     return new Promise((resolve,reject) => {
         ajax({
@@ -382,15 +403,12 @@ export function getVoiceByServerId(serverId) {
             fail:function (err) {
                 reject(err);
             }
-
         })
     })
 }
 
 export function getImgByServerId(serverId) {
     return new Promise((resolve,reject) => {
-
-        alert('serverId参数'+serverId);
         ajax({
             url:makeUrl('/task/getImgByServerId'),
             data:{
@@ -398,7 +416,6 @@ export function getImgByServerId(serverId) {
             },
             method:'GET',
             success:function (res) {
-                alert('成功获取图片',res);
                 resolve(res);
             },
             fail:function (err) {
