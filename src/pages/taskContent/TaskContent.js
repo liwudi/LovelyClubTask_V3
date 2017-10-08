@@ -87,19 +87,19 @@ class TaskContent extends Component{
         str = JSON.parse(str);
 
         if(str.type == 3){
-            alert('老师编辑作业')
+            //alert('老师编辑作业')
             //在提交作业的情况下
             this.teacherEditTask();
         }else if(str.type == 1){
             //在布置作业的情况下
-            alert('老师布置作业的情况')
+            //alert('老师布置作业的情况')
             this.teacherSetTask();
         }else if(str.type == 2){
-            alert('学生提交作业的情况')
+            //alert('学生提交作业的情况')
             //在提交作业的情况下
             this.fetchData();
         }else if(str.type == 4){
-            alert("学生编辑作业")
+            //alert("学生编辑作业")
         }
 
     }
@@ -112,7 +112,7 @@ class TaskContent extends Component{
         //alert(userId);
         saveTaskFinished(content,taskSubjectId,userId,this.state.id).then(res => {
             console.log('saveTaskFinished',res);
-            alert('成功的保存了作业，上传的id是'+this.state.id);
+            //alert('成功的保存了作业，上传的id是'+this.state.id);
             this.props.history.goBack();
         }).catch(err => {
             this.setState({
@@ -137,7 +137,7 @@ class TaskContent extends Component{
     teacherSetTask(){
         this.props.dispatch(TaskActions.taskContent(this.state.inputValue));
         this.props.dispatch(TaskActions.taskId(this.state.id));
-        alert('进行dispatch>>'+this.state.id);
+        //alert('进行dispatch>>'+this.state.id);
         this.props.history.goBack();
     }
 
@@ -153,10 +153,10 @@ class TaskContent extends Component{
             isComplated: false
         })
         if(this.state.isRecording){
-            alert("执行录音结束end事件");
+            //alert("执行录音结束end事件");
             this.addVoiceEndEvent();
         }else{
-            alert('开始执行录音start');
+            //alert('开始执行录音start');
             _this.setState({
                 isRecording: true
             })
@@ -170,7 +170,7 @@ class TaskContent extends Component{
             success: function (res) {
                 //_this.isRecording = true;
 
-                alert('录音成功start'+res);
+                //alert('录音成功start'+res);
 
             },
             cancel: function () {
@@ -184,7 +184,7 @@ class TaskContent extends Component{
             complete: function (res) {
                 //voice.localId = res.localId;
                 let localId = res.localId;
-                alert('录音时间已超过一分钟>>'+res.localId);
+                //alert('录音时间已超过一分钟>>'+res.localId);
                 _this.setState({
                     isShowVoiceComplateInfo: true,
                     isRecording: false,
@@ -208,13 +208,13 @@ class TaskContent extends Component{
                 });
 
 
-                alert("录音结束EndEvent>>"+_this.localId);
+                //alert("录音结束EndEvent>>"+_this.localId);
                 //Todo:上传语音id得到serverId
                 //_this.upLoadVoice(localId,taskFinishedId);
             },
             fail: function (err) {
-                alert("录音结束EndEvent>>"+err);
-                alert(JSON.stringify(res));
+                //alert("录音结束EndEvent>>"+err);
+                //alert(JSON.stringify(res));
             }
         });
     }
@@ -226,7 +226,7 @@ class TaskContent extends Component{
             localId:_this.localId+"",
             success: function (res) {
                 let serverId = res.serverId;
-                alert('上传语音成功，下面自动调用下载语音>>serverID'+serverId);
+                //alert('上传语音成功，下面自动调用下载语音>>serverID'+serverId);
                 let id = _this.state.id;
                 if(type == 2){//在交作业的情况下
                     finishTask();
@@ -236,7 +236,7 @@ class TaskContent extends Component{
 
                 function finishTask() {
                     dloadVoice(serverId,_this.state.id).then(res => {
-                        alert('服务端已经下载好语音了')
+                        //alert('服务端已经下载好语音了')
                         getVoiceByServerId(serverId).then(res => {
                             res = JSON.parse(res);
                             let url = serviceUrl + res.fullPath;
@@ -245,12 +245,12 @@ class TaskContent extends Component{
                             })
                         })
                     }).catch(err=>{
-                        alert('发生错误>>'+err);
+                        //alert('发生错误>>'+err);
                     })
                 }
                 function task_finishTask() {
                     task_dloadVoice(serverId,_this.state.id).then(res => {
-                        alert('服务端已经下载好语音了')
+                        //alert('服务端已经下载好语音了')
                         getVoiceByServerId(serverId).then(res => {
                             res = JSON.parse(res);
                             let url = serviceUrl + res.fullPath;
@@ -259,13 +259,13 @@ class TaskContent extends Component{
                             })
                         })
                     }).catch(err=>{
-                        alert('发生错误>>'+err);
+                        //alert('发生错误>>'+err);
                     })
                 }
 
             },
             fail: function (err) {
-                alert('上传语音失败'+err);
+                //alert('上传语音失败'+err);
             }
         })
     }
@@ -308,19 +308,19 @@ class TaskContent extends Component{
         let type = JSON.parse(_this.props.match.params.taskSubjectId).type;
         wx.chooseImage({
             success: function (res) {
-                alert('选择图片成功')
+                //alert('选择图片成功')
                 let localIds = res.localIds;
 
                 let i = 0, length = localIds.length;
                 //upload();
                 function upload() {
-                    alert('开始上传图片'+i);
-                    alert('这是的localId是》》'+localIds[i]);
+                    //alert('开始上传图片'+i);
+                    //alert('这是的localId是》》'+localIds[i]);
                     wx.upLoadImage({
                         localId: localIds[i],
                         isShowProgressTips: 1,
                         success: function (res) {
-                            alert('上传图片成功，serverid>>'+res.serverId);
+                            //alert('上传图片成功，serverid>>'+res.serverId);
                             i++;
                             if (i < length) {
                                 upload();
@@ -336,7 +336,7 @@ class TaskContent extends Component{
                             function finishedTask_img() {
                                 dloadImg(serverId,_this.state.id).then(res => {
                                     getImgByServerId(serverId).then(res => {
-                                        alert('获取图片成功')
+                                        //alert('获取图片成功')
                                         res = JSON.parse(res);
                                         let url = serviceUrl + res.fullPath;
                                         _this.setState({
@@ -350,7 +350,7 @@ class TaskContent extends Component{
                             function task_img(){
                                 taskSubject_dloadImg(serverId,_this.state.id).then(res => {
                                     getImgByServerId(serverId).then(res => {
-                                        alert('获取图片成功')
+                                        //alert('获取图片成功')
                                         res = JSON.parse(res);
                                         let url = serviceUrl + res.fullPath;
                                         _this.setState({
@@ -379,7 +379,7 @@ class TaskContent extends Component{
 
     upLoadImage(localId){
         let _this = this;
-        alert(_this.props.match.params.taskSubjectId)
+        //alert(_this.props.match.params.taskSubjectId)
         let type = JSON.parse(_this.props.match.params.taskSubjectId).type;
 
         wx.uploadImage({
@@ -388,13 +388,13 @@ class TaskContent extends Component{
             success: function (res) {
                 var serverId = res.serverId; // 返回图片的服务器端ID
                 //将上传的图片下载到本地服务器
-                alert("type="+type);
+                //alert("type="+type);
                 if(type == 2){
                     //在提交作业的情况下
                     finishTask();
                 }else if(type == 1){
                     //在布置作业情况下
-                    alert('upload sucess')
+                    //alert('upload sucess')
                     task_finishTask();
                 }
                 function finishTask() {
@@ -402,10 +402,10 @@ class TaskContent extends Component{
                         getImgByServerId(serverId).then(res => {
                             //图片下载到本地
                             res = JSON.parse(res);
-                            alert('下载到本地的图片路径>>>>>'+res.fullPath);
+                            //alert('下载到本地的图片路径>>>>>'+res.fullPath);
                             let url = serviceUrl + res.fullPath;
 
-                            alert(_this.state.addImageList.concat([url]));
+                            //alert(_this.state.addImageList.concat([url]));
                             _this.setState({
                                 addImageList:_this.state.addImageList.concat([url])
                             });
@@ -415,9 +415,9 @@ class TaskContent extends Component{
                     });
                 }
                 function task_finishTask() {
-                    alert("执行task_finishTask");
+                    //alert("执行task_finishTask");
                     task_dloadImg(serverId,_this.state.id).then(res => {
-                        alert('服务端已经下载好图片了')
+                        //alert('服务端已经下载好图片了')
                         getImgByServerId(serverId).then(res => {
                             res = JSON.parse(res);
                             let url = serviceUrl + res.fullPath;

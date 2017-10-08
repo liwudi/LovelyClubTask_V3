@@ -36,11 +36,11 @@ class SetTaskPage extends Component{
         let content = this.props.taskStore.taskContent || this.state.taskContent;
         let ids = this.props.taskStore.taskSubjectId || this.state.taskSubjectId;//这个
         //更新作业题目，id是正值。
-        alert('this.isGetFromEdit()'+this.isGetFromEdit());
+        //alert('this.isGetFromEdit()'+this.isGetFromEdit());
         this.isGetFromEdit() && updateTaskSubject(subject,content,id,userid).then(res => {
             this.props.history.goBack();
         });
-        alert('id'+id);
+        //alert('id'+id);
         //布置作业题目获取作业卡，id是负值
         !this.isGetFromEdit() && saveTaskSubject(subject,content,userid,id).then(res => {
             console.log('saveTaskSubject',res);

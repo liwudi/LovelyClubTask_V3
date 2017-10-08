@@ -155,7 +155,7 @@ export default class TaskDetail extends Component{
     }
     render(){
         return (
-            <div className="pageBox boxSizing">
+            <div className="pageBox">
                 <TopBanner title="作业详情" router={this.props.history} />
                 <div className="fx1 bgWhite borderTop boxSizing" style={{overflow:'auto'}}>
                     <div className="detail boxSizing">
@@ -207,7 +207,7 @@ export default class TaskDetail extends Component{
                     {
                         this.state.numberList.map((item,index) => {
                             return (
-                                <div key={index} className="item disFx boxSizing borderBottom paddingBottom paddingTop">
+                                <div key={index} className="item boxHidden disFx boxSizing borderBottom paddingBottom paddingTop">
                                     <div className="itemLeft">
                                         <img src={item.user && item.user.headImgUrl || require('../../assets/images/userImg.png')} style={{width:'30px',height:'30px',borderRadius:'50%'}}/>
                                     </div>

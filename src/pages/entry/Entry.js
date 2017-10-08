@@ -15,7 +15,17 @@ export default class TaskDetail extends Component{
 
         }
     }
+    componentDidMount(){
+        this.isGotoMyTask();
+    }
+    isGotoMyTask(){
+        //alert('分享进入>>'+subjectId);
+        if(Number(subjectId) == 1){
+            this.props.history.push(`/mytask/${subjectId}`);
+        }else{
 
+        }
+    }
     render(){
         return (
             <div className="pageBox">

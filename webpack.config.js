@@ -10,6 +10,8 @@ var devFlagPlugin = new webpack.DefinePlugin({
 var HtmlwebpackPlugin = require('html-webpack-plugin');
 var OpenBrowserPlugin = require('open-browser-webpack-plugin');
 
+var CleanWebpackPlugin = require('clean-webpack-plugin');
+
 module.exports = {
 	entry:
 		'./src/index.js'
@@ -32,7 +34,8 @@ module.exports = {
 
 		new OpenBrowserPlugin({
 			url: 'http://localhost:8080'
-		})
+		}),
+		new CleanWebpackPlugin('public')
 	],
 
 	module: {

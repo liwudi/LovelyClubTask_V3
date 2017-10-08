@@ -34,7 +34,7 @@ export default class EditTask extends Component{
         this.isGetFromEdit() && updateTaskSubject(subject,content,id,userid).then(res => {
             this.props.history.goBack();
         });
-        alert('这时候需要上传的负值id'+ids);
+        //alert('这时候需要上传的负值id'+ids);
         //布置作业题目获取作业卡，id是负值
         !this.isGetFromEdit() && saveTaskSubject(subject,content,userid,ids).then(res => {
             console.log('saveTaskSubject',res);

@@ -42,7 +42,7 @@ export default class HomePage extends Component{
         
     }
     share(){
-        alert('开始分享，本次id是',this.state.taskId);
+        //alert('开始分享，本次id是',this.state.taskId);
         let taskId = this.state.taskId;
         wx.onMenuShareAppMessage({
             title: '作业', // 分享标题
@@ -71,12 +71,12 @@ export default class HomePage extends Component{
                         <div className="center" style={{width:'100%',height:'50px'}}>数学</div>
                         <div className="center" style={{width:'100%',height:'50px'}}>我是一个小逗比，咿呀咿呀咦！！</div>
                         <div className="center" style={{width:'100%',height:'100px'}}>
-                            <button onClick={()=>this.share()}>分享朋友</button>
+                            <button onClick={()=>this.share()}>点击右上角的分享，分享给朋友</button>
                         </div>
-                        <div>
-                            <p className="center note padding">长按扫描二维码领取作业</p>
-                            <p className="center note padding">完成作业即可获得专属成就卡</p>
-                        </div>
+                        {/*<div>*/}
+                            {/*<p className="center note padding">长按扫描二维码领取作业</p>*/}
+                            {/*<p className="center note padding">完成作业即可获得专属成就卡</p>*/}
+                        {/*</div>*/}
                     </div>
                 </div>
                 <div className="cardBottom bgWhite paddingTop">
