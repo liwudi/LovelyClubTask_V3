@@ -11,15 +11,18 @@ import Button from '../../components/Button';
 
 import serverConfig from '../../config';
 const serviceUrl = serverConfig.server.main_url;
-
+import { findTaskSubjectById } from '../../services/AppServices';
 export default class HomePage extends Component{
     constructor(props){
         super(props);
         this.state = {
             tasks:[],
-            taskId:props.match.params.taskId
+            taskId:props.match.params.taskId,
+            taskTitle: '作业标题',
+            taskContent:'作业内容'
         }
     }
+
     renderContent(){
         return (
             <div>
@@ -35,7 +38,7 @@ export default class HomePage extends Component{
      * @function gotoTop 作用：
      */
     gotoTop(history){
-        this.props.history.push("/home")
+        this.props.history.push("/")
 
     }
     renderCard(){
@@ -60,6 +63,21 @@ export default class HomePage extends Component{
             }
         });
     }
+    fetchData1(){
+        let taskSubjectId = this.state.taskId;
+        let _this = this;
+        findTaskSubjectById(taskSubjectId).then(res => {
+            res = JSON.parse(res);
+            console.log('findTaskSubjectById',res);
+            _this.setState({
+                taskTitle: res.subject,
+                taskContent:res.content
+            })
+        })
+    }
+    componentDidMount(){
+        this.fetchData1();
+    }
     render(){
         console.log('当前history',this.props.history);
         return(
@@ -68,8 +86,8 @@ export default class HomePage extends Component{
                 <div className="fx1 center">
                     <div className="bgWhite paddingBottom" style={{width:'80%',borderRadius:'10px',overflow:"hidden"}}>
                         <div className="colorWhite center bgOrange" style={{width:"100%",height:'40px'}}>作业卡</div>
-                        <div className="center" style={{width:'100%',height:'50px'}}>数学</div>
-                        <div className="center" style={{width:'100%',height:'50px'}}>我是一个小逗比，咿呀咿呀咦！！</div>
+                        <div className="center" style={{width:'100%',height:'50px'}}>{this.state.taskTitle}</div>
+                        <div className="center" style={{width:'100%',height:'50px'}}>{this.state.taskContent}</div>
                         <div className="center" style={{width:'100%',height:'100px'}}>
                             <button onClick={()=>this.share()}>点击右上角的分享，分享给朋友</button>
                         </div>
@@ -80,8 +98,8 @@ export default class HomePage extends Component{
                     </div>
                 </div>
                 <div className="cardBottom bgWhite paddingTop">
-                    <p className="center">长按保存图片，可在课程内发送</p>
-                    <p className="center">学员扫码后即可领取作业</p>
+                    <p className="center">点击右上角分享菜单发送给学员</p>
+                    <p className="center">学员即可领取作业</p>
                     <div className="center marginTop">
                         <Button onClick={()=>{this.gotoTop()}} title="返回作业管理" style={{width:'50%',height:'30px'}} />
                     </div>

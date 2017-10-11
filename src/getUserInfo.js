@@ -3,14 +3,17 @@
  */
 import { getUserInfo } from './services/AppServices';
 
-getUserInfo(openId).then(res => {
-    //alert(res);
-    localStorage.setItem("userInfo",res);
-});
+getuserInfo();
 
 export default function getuserInfo() {
-    getUserInfo(openId).then(res => {
-        //alert(res);
-        localStorage.setItem("userInfo",res);
-    });
+    let userInfo = localStorage.getItem('userInfo');
+    userInfo = JSON.parse(userInfo);
+    if(userInfo){
+        return Promise.resolve(userInfo);
+    }else {
+        return getUserInfo(openId).then(res => {
+            localStorage.setItem("userInfo",res);
+        });
+    }
 }
+

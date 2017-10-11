@@ -12,6 +12,7 @@ import ViewForRightArrow from '../../components/ViewForRightArrow';
 
 import { updateTaskSubject } from '../../services/AppServices';
 
+import { getuserInfo } from '../../getUserInfo';
 
 export default class EditTask extends Component{
     constructor(props){
@@ -21,12 +22,13 @@ export default class EditTask extends Component{
             taskSubjectId:'',
             isChecked:false,
             isShowModal:false,
-            taskContent:''
+            taskContent:'',
+            userInfo:null
         }
     }
     getCardEvent(){
         let id = this.props.taskStore.taskId;
-        let userid = JSON.parse(localStorage.getItem('userInfo')).openId;
+        let userid = JSON.parse(localStorage.getItem('userInfo')).openId || this.state.userInfo.openId;
         let subject = this.props.taskStore.taskTitle || this.state.taskTitle;
         let content = this.props.taskStore.taskContent || this.state.taskContent;
         let ids = this.props.taskStore.taskSubjectId || this.state.taskSubjectId;
@@ -34,16 +36,23 @@ export default class EditTask extends Component{
         this.isGetFromEdit() && updateTaskSubject(subject,content,id,userid).then(res => {
             this.props.history.goBack();
         });
-        //alert('这时候需要上传的负值id'+ids);
+
         //布置作业题目获取作业卡，id是负值
         !this.isGetFromEdit() && saveTaskSubject(subject,content,userid,ids).then(res => {
             console.log('saveTaskSubject',res);
             this.props.history.push(`/taskCard/{false}`);
         });
     }
-
-
-
+    getUserInfo(){
+        getuserInfo().then(res => {
+            this.setState({
+                userInfo: res
+            })
+        })
+    }
+    componentDidMount(){
+        this.getUserInfo();
+    }
 
 
 

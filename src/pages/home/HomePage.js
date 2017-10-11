@@ -2,12 +2,13 @@
  * Created by mapbar_front on 2017/9/5.
  */
 import React,{ Component } from 'react';
-import { BrowserRouter as Router, Link, Route} from 'react-router-dom';
 import '../../css/common.css';
 import TopBanner from '../../components/TopBanner';
 import NewTask from '../../components/NewTask';
 import ViewForRightDom from '../../components/ViewForRightDom';
 
+
+import { getuserInfo } from '../../getUserInfo';
 import { connect } from 'react-redux';
 import {
     TYPES,
@@ -34,22 +35,13 @@ class HomePage extends Component{
             userInfo: localStorage.getItem('userInfo')
         }
     }
-    itemEvent(index){
-        //alert(index);
-        if(this.state.tasks[index].course == '无关联课程'){
+    getUserInfo(){
+        getuserInfo().then(res => {
             this.setState({
-                connect:true
-            },()=>{
-                let _this = this;
-                setTimeout(function () {
-                    _this.setState({
-                        connect:false
-                    })
-                },2000)
+                userInfo: res
             })
-        }
+        })
     }
-
     closeShowModal(){
         this.setState({
             isShowModal:false
@@ -112,12 +104,16 @@ class HomePage extends Component{
     }
     componentDidMount(){
         this.fetchData();
-        // alert(openId);
-        // getUserInfo(openId).then(res => {
-        //     alert("获取的用户信息"+res);
-        // })
+        this.isGotoMyTask();
+        this.getUserInfo();
     }
+    isGotoMyTask(){
+        if(Number(subjectId) == 1){
+            this.props.history.replace(`/mytask/${subjectId}`);
+        }else{
 
+        }
+    }
     renderContent(){
         if(this.state.tasks.length == 0){
             return (
@@ -136,10 +132,9 @@ class HomePage extends Component{
                                     <div onClick={()=>{this.gotoDetailEvent(index)}} className="baseInfo padding">
                                         <p>{item.subject}</p>
                                         <p className="note smallSize marginTop">{item.content}</p>
-                                        <p className="note smallSize marginTop"><span className="colorRed">{item.hasComplated || 0}</span>人已交作业</p>
+                                        <p className="note smallSize marginTop"><span className="colorRed">{item.submited || 0}</span>人已交作业</p>
                                     </div>
                                     <div className="functionLink disFx paddingTop paddingBottom" style={{backgroundColor:'#f9f9f9',color:"#999999"}}>
-                                        <p onClick={()=>{this.itemEvent(index)}} className="fx1 center borderRight">推送通知</p>
                                         <p onClick={()=>{this.props.history.push(`/taskCard/${item.id}`)}} className="fx1 center borderRight">获取作业卡</p>
                                         <p onClick={()=>{this.setState({isShowModal:true,editIndex:index})}} className="fx1 center">设置</p>
                                     </div>
@@ -148,7 +143,7 @@ class HomePage extends Component{
                         })
                     }
                     {
-                        this.state.total/10 >= this.state.pageNumber ? <div className="loadMore center">
+                        this.state.total/10 > this.state.pageNumber ? <div className="loadMore center">
                             <span onClick={()=>this.fetchMoreData()}>加载更多...</span>
                         </div>:<div className="loadMore center">
                             <span style={{color:'#999999'}} onClick={()=>this.fetchMoreData()}>没有更多了</span>

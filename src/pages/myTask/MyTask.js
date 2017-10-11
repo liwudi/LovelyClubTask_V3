@@ -10,6 +10,7 @@ import Img from '../../components/Img';
 
 import { saveTaskFinished,findTaskSubjectById,getUserInfo } from '../../services/AppServices';
 
+import { getuserInfo } from '../../getUserInfo';
 export default class MyTask extends Component{
     constructor(props){
         super(props);
@@ -17,17 +18,17 @@ export default class MyTask extends Component{
             taskSubjectId: props.match.params.taskId,
             taskTitle:'数学',
             taskContent:'我是一个小逗比，咿呀咿呀咦！！',
+            userInfo:null
         }
     }
-    fetchData(){
-        let content = this.state.taskContent;
-        let taskSubjectId = 1;
-        let userId = localStorage.getItem('userInfo').openId;
-        saveTaskFinished(content,taskSubjectId,userId).then(res => {
-            console.log(res);
+    getUserInfo(){
+        getuserInfo().then(res => {
+            this.setState({
+                userInfo: res
+            })
         })
     }
-    fetchData1(){
+    fetchData(){
         let taskSubjectId = this.state.taskSubjectId;
         let _this = this;
         findTaskSubjectById(taskSubjectId).then(res => {
@@ -40,7 +41,8 @@ export default class MyTask extends Component{
         })
     }
     componentDidMount(){
-        this.fetchData1();
+        this.fetchData();
+        this.getUserInfo();
     }
     gotoTaskContent(){
         let str = JSON.stringify({type:2,taskSubjectId:this.state.taskSubjectId});

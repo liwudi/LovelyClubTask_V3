@@ -3,14 +3,14 @@
  */
 import React,{ Component } from 'react';
 import { connect } from 'react-redux';
-import { BrowserRouter as Router, Link, Route} from 'react-router-dom';
 import '../../css/common.css';
 import './css/taskContent.css';
 import TopBanner from '../../components/TopBanner';
 import Button from '../../components/Button';
-import NewTask from '../../components/NewTask';
 import Modal1 from '../../components/Modal1';
 import Modal from '../../components/Modal';
+
+import { getuserInfo } from '../../getUserInfo';
 import {
     TYPES,
     TaskActions
@@ -29,12 +29,21 @@ class TaskContent extends Component{
             taskSubjectId: JSON.parse(props.match.params.taskSubjectId).taskSubjectId,//这个记录的是学生交作业的课程id
             willAddVoiceList:[],
             addImageList:[],
-            id: -(Math.floor(Math.random()*100000)+10000)
+            id: -(Math.floor(Math.random()*100000)+10000),
+            userInfo:null
         }
+    }
+    getUserInfo(){
+        getuserInfo().then(res => {
+            this.setState({
+                userInfo: res
+            })
+        })
     }
     componentDidMount(){
         this.initTeacherEditData();
         this.initStudentsEditData();
+        this.getUserInfo();
     }
     initTeacherEditData(){
         let str = this.props.match.params.taskSubjectId;
@@ -106,10 +115,9 @@ class TaskContent extends Component{
     //学生交作业
     fetchData(){
         let content = this.state.inputValue;
-        let taskSubjectId = Number(this.state.taskSubjectId) || 1;
-        //alert(localStorage.getItem('userInfo'));
-        let userId = JSON.parse(localStorage.getItem('userInfo')).openId;
-        //alert(userId);
+        let taskSubjectId = Number(this.state.taskSubjectId);
+        let userId = JSON.parse(localStorage.getItem('userInfo')).openId || this.state.userInfo.openId;
+
         saveTaskFinished(content,taskSubjectId,userId,this.state.id).then(res => {
             console.log('saveTaskFinished',res);
             //alert('成功的保存了作业，上传的id是'+this.state.id);
@@ -432,6 +440,13 @@ class TaskContent extends Component{
             }
         });
     }
+
+    previewImage(url){
+        wx.previewImage({
+            current: url, // 当前显示图片的http链接
+            urls: [this.state.willAddVoiceList] // 需要预览的图片http链接列表
+        });
+    }
     renderContent(){
         return (
             <div>
@@ -465,7 +480,7 @@ class TaskContent extends Component{
                         this.state.addImageList.map((item,index) => {
                             return (
                                 <div className="upLoadImageBox" key={index}>
-                                    <img className="upLoadImage" src={this.state.addImageList[index]} alt="上传图片" />
+                                    <img onClick={()=>this.previewImage(this.state.addImageList[index])} className="upLoadImage" src={this.state.addImageList[index]} alt="上传图片" />
                                 </div>
                             )
                         })

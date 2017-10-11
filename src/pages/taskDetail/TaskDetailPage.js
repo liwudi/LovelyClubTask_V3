@@ -11,7 +11,7 @@ import './css/taskDetail.css'
 import TopBanner from '../../components/TopBanner';
 import ViewForRightDom from '../../components/ViewForRightDom';
 import Modal2 from '../../components/Modal2';
-
+import { getuserInfo } from '../../getUserInfo';
 import { getTaskFinishedList,findTaskSubjectById,findTaskFinishedById,deleteTaskFinished,saveFinishedComment,deleteFinishedComment,saveFinishedPraise,deleteFinishedPraise } from '../../services/AppServices';
 import { deleteItemByIndex } from '../../assets/utils/utils';
 export default class TaskDetail extends Component{
@@ -25,12 +25,19 @@ export default class TaskDetail extends Component{
             taskPicsList:[],
             taskVoiceList:[],
             isShowDelete:false,
-            currentPageIndex:1
+            currentPageIndex:1,
+            userInfo:null
         }
     }
+    getUserInfo(){
+        getuserInfo().then(res => {
+            this.setState({
+                userInfo: res
+            })
+        })
+    }
     deleteEvent(){
-        //console.log(this.state.numberList,this.state.currentDeleteIndex)
-        //const arr = deleteItemByIndex(this.state.numberList,this.state.currentDeleteIndex);
+
         let _this = this;
         let taskFinishedId = this.state.numberList[this.state.currentDeleteIndex].id;
         deleteTaskFinished(taskFinishedId).then(res => {
@@ -52,9 +59,13 @@ export default class TaskDetail extends Component{
             return
         }
         this.time = new Date().getTime();
-        let userId = JSON.parse(localStorage.getItem('userInfo')).openId;
+        let userId = JSON.parse(localStorage.getItem('userInfo')).openId || this.state.userInfo.openId;
+
 
         saveFinishedPraise(id,userId).then(res => {
+            this.setState({
+                compoleteNumber: res.result.count
+            });
             this.fetchData();
         })
     }
@@ -97,7 +108,6 @@ export default class TaskDetail extends Component{
         },()=>{
             this.fetchData(this.state.currentPageIndex);
         });
-
     }
     fetchData(pageNumber = 1,rowsNumber = 10){
         let taskSubjectId = this.props.match.params.id;
@@ -130,13 +140,12 @@ export default class TaskDetail extends Component{
         });
     }
     componentDidMount(){
-
         this.fetchData();
+        this.getUserInfo();
     }
     renderSpeak(){
         return (
             <div className="rowCenter" style={{width:'100%',height:'50px',backgroundColor:'#f1f1f1',justifyContent:'space-around'}}>
-
                 <img className="iconDefault" style={{width:'40px',height:'25px'}} src={require("../../assets/images/speaks.png")} />
                 <input
                     type="text"
@@ -219,7 +228,7 @@ export default class TaskDetail extends Component{
                                             </div>
                                             <div onClick={()=>{this.setState({isShowDelete:true,currentDeleteIndex:index})}} className="bigSize marginRight">...</div>
                                         </div>
-                                        <p className="marginTop">{item.content}</p>
+                                        <p className="marginTop"    >{item.content}</p>
                                         <div>
 
                                         </div>
@@ -254,7 +263,10 @@ export default class TaskDetail extends Component{
                                                 <img onClick={()=>this.setState({isSpeak:true,commentsIndex:index})} src={require("../../assets/images/comments.png")} className="iconDefault" /><span className="marginLeft">点评</span>
                                             </div>
                                             <div className="rowCenter" style={{width:'100%',height:'40px',overflow:'hidden'}}>
-                                                <img onClick={()=>this.pramiseEvent(item.id)} src={require("../../assets/images/pramise.png")}  className="iconDefault" /><span className="marginLeft">{item.praiseCount}</span>
+                                                {
+                                                    item.praiseState ? <span  onClick={()=>this.pramiseEvent(item.id)} className="iconDefault">已点赞</span> : <img onClick={()=>this.pramiseEvent(item.id)} src={require("../../assets/images/pramise.png")}  className="iconDefault" />
+                                                }
+                                                <span className="marginLeft">{item.praiseCount}</span>
                                             </div>
                                         </div>
                                         {
@@ -282,10 +294,7 @@ export default class TaskDetail extends Component{
                     </div>
                     {
                         this.state.compoleteNumber/10 > this.state.currentPageIndex ? <div onClick={() => this.fetchMoreDate()} className="padding center colorMain marginButtom">查看更多</div>:<div className="padding center colorNote marginButtom">没有更多了</div>
-
                     }
-
-
                 </div>
                 {
                     this.state.isShowDelete?

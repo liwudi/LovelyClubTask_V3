@@ -12,6 +12,7 @@ import ViewForRightArrow from '../../components/ViewForRightArrow';
 
 import { findTaskSubjectById,saveTaskSubject,updateTaskSubject } from '../../services/AppServices';
 
+import { getuserInfo } from '../../getUserInfo';
 
 import {
     TYPES,
@@ -25,13 +26,21 @@ class SetTaskPage extends Component{
             taskSubjectId:props.taskStore.taskSubjectId,
             isChecked:false,
             isShowModal:false,
-            taskContent:props.taskStore.taskContent
+            taskContent:props.taskStore.taskContent,
+            userInfo:null
         }
+    }
+    getUserInfo(){
+        getuserInfo().then(res => {
+            this.setState({
+                userInfo: res
+            })
+        })
     }
     getCardEvent(){
 
         let id = this.props.taskStore.taskId;//这个是taskId，代表的编辑作业的taskSubjectId，代表的是布置作业的那个dispatch的负值
-        let userid = localStorage.getItem('userInfo') && JSON.parse(localStorage.getItem('userInfo')).openId || 123;
+        let userid = localStorage.getItem('userInfo') && JSON.parse(localStorage.getItem('userInfo')).openId || this.state.userInfo.openId;
         let subject = this.props.taskStore.taskTitle || this.state.taskTitle;
         let content = this.props.taskStore.taskContent || this.state.taskContent;
         let ids = this.props.taskStore.taskSubjectId || this.state.taskSubjectId;//这个
@@ -102,6 +111,7 @@ class SetTaskPage extends Component{
 
     componentDidMount(){
         this.isGetFromEdit() && this.fetchData();//来自编辑的界面的话，还是需要获取额外的数据的
+        this.getUserInfo();
     }
 
     renderTab(){
