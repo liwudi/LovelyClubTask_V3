@@ -13,7 +13,8 @@ import Modal from '../../components/Modal';
 import { getuserInfo } from '../../getUserInfo';
 import {
     TYPES,
-    TaskActions
+    TaskActions,
+    ContentInput,
 } from '../../actions/index';
 import { findTaskSubjectById,saveTaskFinished,dloadVoice,dloadImg,task_dloadImg,task_dloadVoice,getVoiceByServerId,getImgByServerId,taskSubject_dloadVoice,taskSubject_dloadImg } from '../../services/AppServices';
 
@@ -30,7 +31,8 @@ class TaskContent extends Component{
             willAddVoiceList:[],
             addImageList:[],
             id: -(Math.floor(Math.random()*100000)+10000),
-            userInfo:null
+            userInfo:null,
+            inputValue: props.inputStore
         }
     }
     getUserInfo(){
@@ -447,10 +449,14 @@ class TaskContent extends Component{
             urls: [this.state.willAddVoiceList] // 需要预览的图片http链接列表
         });
     }
+    inputEvent(e){
+        this.setState({inputValue:e.target.value});
+        this.props.dispatch(ContentInput.contentInput(e.target.value));
+    }
     renderContent(){
         return (
             <div>
-                <textarea onChange={(e)=>{this.setState({inputValue:e.target.value})}} placeholder="请输入作业内容" className="textArea"></textarea>
+                <textarea value={this.state.inputValue} onChange={(e)=>{this.inputEvent(e)}} placeholder="请输入作业内容" className="textArea"></textarea>
             </div>
         )
     }
@@ -539,6 +545,7 @@ class TaskContent extends Component{
 
 export default connect((store)=>{
     return {
-        taskStore:store.taskStore
+        taskStore:store.taskStore,
+        inputStore:store.inputStore
     }
 })(TaskContent);

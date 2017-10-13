@@ -3,7 +3,9 @@
  */
 import * as TYPES from './types';
 import * as TaskActions from './taskAction';
+import * as ContentInput from './contentInput';
 export {
     TYPES,
-    TaskActions
+    TaskActions,
+    ContentInput
 }

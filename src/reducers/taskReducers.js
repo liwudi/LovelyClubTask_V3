@@ -28,7 +28,7 @@ export function taskStore(state = TASK_STATE,action) {
         case TYPES.ADDTASK_SUBJECTID:
             return Object.assign(TASK_STATE,{
                 taskSubjectId: action.taskSubjectId
-            })
+            });
         default:
             return state
     }

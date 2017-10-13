@@ -12,7 +12,8 @@ import { getuserInfo } from '../../getUserInfo';
 import { connect } from 'react-redux';
 import {
     TYPES,
-    TaskActions
+    TaskActions,
+    ContentInput
 } from '../../actions/index';
 import { getTaskSubjectList,deleteTaskSubject } from '../../services/AppServices';
 import './css/HomePage.css'
@@ -61,6 +62,11 @@ class HomePage extends Component{
         this.props.dispatch(TaskActions.taskTitle(''));
         this.props.dispatch(TaskActions.taskContent(''));
         this.props.dispatch(TaskActions.taskSubjectId(''));
+
+        //处理作业的输入
+        this.props.dispatch(ContentInput.contentInput(''));
+
+
         this.props.history.push(`/setTaskPage/${true}`);
     }
     setTaskEvent(){
@@ -68,6 +74,12 @@ class HomePage extends Component{
         this.props.dispatch(TaskActions.taskTitle(''));
         this.props.dispatch(TaskActions.taskContent(''));
         this.props.dispatch(TaskActions.taskSubjectId(''));
+
+
+        //处理作业的输入
+        this.props.dispatch(ContentInput.contentInput(''));
+
+
         this.props.history.push(`/setTaskPage/${false}`);
     }
     gotoDetailEvent(index){
@@ -75,6 +87,11 @@ class HomePage extends Component{
         let id = this.state.tasks[index].id;
         //alert(id);
         this.props.history.push(`/taskDetail/${id}`)
+    }
+    getCardEvent(id){
+        document.getElementById('subjectid').value = id;
+        initJssdk();
+        this.props.history.push(`/taskCard/${id}`);
     }
     fetchMoreData(next){
 
@@ -114,6 +131,7 @@ class HomePage extends Component{
 
         }
     }
+
     renderContent(){
         if(this.state.tasks.length == 0){
             return (
@@ -135,7 +153,7 @@ class HomePage extends Component{
                                         <p className="note smallSize marginTop"><span className="colorRed">{item.submited || 0}</span>人已交作业</p>
                                     </div>
                                     <div className="functionLink disFx paddingTop paddingBottom" style={{backgroundColor:'#f9f9f9',color:"#999999"}}>
-                                        <p onClick={()=>{this.props.history.push(`/taskCard/${item.id}`)}} className="fx1 center borderRight">获取作业卡</p>
+                                        <p onClick={()=>{this.getCardEvent(item.id)}} className="fx1 center borderRight">获取作业卡</p>
                                         <p onClick={()=>{this.setState({isShowModal:true,editIndex:index})}} className="fx1 center">设置</p>
                                     </div>
                                 </div>
@@ -208,6 +226,7 @@ class HomePage extends Component{
 
 
 export default connect((store) => {
+    console.log(store);
     return {
         store: store
     }

@@ -5,7 +5,6 @@ import serverConfig from '../../config';
 const serviceUrl = serverConfig.server.main_url;
 
 import React,{ Component } from 'react';
-import { BrowserRouter as Router, Link, Route} from 'react-router-dom';
 import '../../css/common.css';
 import './css/taskDetail.css'
 import TopBanner from '../../components/TopBanner';
@@ -13,7 +12,7 @@ import ViewForRightDom from '../../components/ViewForRightDom';
 import Modal2 from '../../components/Modal2';
 import { getuserInfo } from '../../getUserInfo';
 import { getTaskFinishedList,findTaskSubjectById,findTaskFinishedById,deleteTaskFinished,saveFinishedComment,deleteFinishedComment,saveFinishedPraise,deleteFinishedPraise } from '../../services/AppServices';
-import { deleteItemByIndex } from '../../assets/utils/utils';
+
 export default class TaskDetail extends Component{
     constructor(props){
         super(props);
@@ -49,10 +48,6 @@ export default class TaskDetail extends Component{
 
     }
 
-    /**
-     * @todo:后台没有点赞重复判断的操作。
-     * @param id
-     */
     pramiseEvent(id){
         !this.time && (this.time = new Date().getTime()-2000);
         if(new Date().getTime() - this.time < 2000){

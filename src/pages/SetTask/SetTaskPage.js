@@ -132,7 +132,6 @@ class SetTaskPage extends Component{
                 </div>
             )
         }
-
     }
 
 
@@ -172,19 +171,19 @@ class SetTaskPage extends Component{
                             style={{justifyContent:'space-between'}}
                         />
                     </div>
-                    <div className="marginTop">
-                        <ViewForRightArrow
-                            title='关联课程'
-                            style={{borderBottom:'1px solid #cccccc',justifyContent:'space-between'}}
-                            prompt="未关联"
-                            onClick={()=>{return;this.props.history.push('/relatedCourses')}}
-                        />
-                        <ViewForRightArrow
-                            title='仅课程报名者可交作业'
-                            style={{justifyContent:'space-between'}}
-                            rightView={()=>this.renderTab()}
-                        />
-                    </div>
+                    {/*<div className="marginTop">*/}
+                        {/*<ViewForRightArrow*/}
+                            {/*title='关联课程'*/}
+                            {/*style={{borderBottom:'1px solid #cccccc',justifyContent:'space-between'}}*/}
+                            {/*prompt="未关联"*/}
+                            {/*onClick={()=>{return;this.props.history.push('/relatedCourses')}}*/}
+                        {/*/>*/}
+                        {/*<ViewForRightArrow*/}
+                            {/*title='仅课程报名者可交作业'*/}
+                            {/*style={{justifyContent:'space-between'}}*/}
+                            {/*rightView={()=>this.renderTab()}*/}
+                        {/*/>*/}
+                    {/*</div>*/}
                 </div>
                 <div className="buttonContainer center">
                     <div
