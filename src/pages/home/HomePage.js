@@ -89,7 +89,10 @@ class HomePage extends Component{
         this.props.history.push(`/taskDetail/${id}`)
     }
     getCardEvent(id){
+        console.log('获取的id是'+id);
         document.getElementById('subjectid').value = id;
+        console.log(document.getElementById('subjectid'));
+        console.log('执行jssdk');
         initJssdk();
         this.props.history.push(`/taskCard/${id}`);
     }
@@ -125,10 +128,11 @@ class HomePage extends Component{
         this.getUserInfo();
     }
     isGotoMyTask(){
-        if(Number(subjectId) == 1){
-            this.props.history.replace(`/mytask/${subjectId}`);
-        }else{
 
+        if(state){
+            this.props.history.replace(`/mytask/${state}`);
+        }else{
+            return
         }
     }
 

@@ -97,7 +97,6 @@ class SetTaskPage extends Component{
         this.setState({isShowModal:false})
     }
     fetchData(){
-
         findTaskSubjectById(this.props.taskStore.taskId).then(res => {
             console.log('获取的数据',res);
             res = JSON.parse(res);

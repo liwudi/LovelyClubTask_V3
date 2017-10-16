@@ -18,3 +18,5 @@ const service_test = {
 export default {
     server: service_test
 }
+
+const url = 'http://homework.shsoapp.com:80/ttzyservice/start';

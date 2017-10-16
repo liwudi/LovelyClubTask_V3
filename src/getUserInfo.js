@@ -5,7 +5,7 @@ import { getUserInfo } from './services/AppServices';
 
 getuserInfo();
 
-export default function getuserInfo() {
+export function getuserInfo() {
     let userInfo = localStorage.getItem('userInfo');
     userInfo = JSON.parse(userInfo);
     if(userInfo){
@@ -16,4 +16,6 @@ export default function getuserInfo() {
         });
     }
 }
+
+export default getUserInfo;
 
