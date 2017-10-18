@@ -44,17 +44,27 @@ class SetTaskPage extends Component{
         let subject = this.props.taskStore.taskTitle || this.state.taskTitle;
         let content = this.props.taskStore.taskContent || this.state.taskContent;
         let ids = this.props.taskStore.taskSubjectId || this.state.taskSubjectId;//这个
-        //更新作业题目，id是正值。
-        //alert('this.isGetFromEdit()'+this.isGetFromEdit());
-        this.isGetFromEdit() && updateTaskSubject(subject,content,id,userid).then(res => {
-            this.props.history.goBack();
-        });
-        //alert('id'+id);
-        //布置作业题目获取作业卡，id是负值
-        !this.isGetFromEdit() && saveTaskSubject(subject,content,userid,id).then(res => {
-            console.log('saveTaskSubject',res);
-            this.props.history.push(`/taskCard/{false}`);
-        });
+
+
+        if(subject == 'undefined' || content == 'undefined'){
+            this.setState({
+                isNullContent: true
+            })
+        }else{
+            //更新作业题目，id是正值。
+            //alert('this.isGetFromEdit()'+this.isGetFromEdit());
+            this.isGetFromEdit() && updateTaskSubject(subject,content,id,userid).then(res => {
+                this.props.history.goBack();
+            });
+
+            //alert('id'+id);
+            //布置作业题目获取作业卡，id是负值
+            !this.isGetFromEdit() && saveTaskSubject(subject,content,userid,id).then(res => {
+                console.log('saveTaskSubject',res);
+                this.props.history.push(`/taskCard/{false}`);
+            });
+        }
+
     }
 
     /**
@@ -170,19 +180,7 @@ class SetTaskPage extends Component{
                             style={{justifyContent:'space-between'}}
                         />
                     </div>
-                    {/*<div className="marginTop">*/}
-                        {/*<ViewForRightArrow*/}
-                            {/*title='关联课程'*/}
-                            {/*style={{borderBottom:'1px solid #cccccc',justifyContent:'space-between'}}*/}
-                            {/*prompt="未关联"*/}
-                            {/*onClick={()=>{return;this.props.history.push('/relatedCourses')}}*/}
-                        {/*/>*/}
-                        {/*<ViewForRightArrow*/}
-                            {/*title='仅课程报名者可交作业'*/}
-                            {/*style={{justifyContent:'space-between'}}*/}
-                            {/*rightView={()=>this.renderTab()}*/}
-                        {/*/>*/}
-                    {/*</div>*/}
+
                 </div>
                 <div className="buttonContainer center">
                     <div
@@ -191,6 +189,12 @@ class SetTaskPage extends Component{
                         onClick={()=>{this.getCardEvent()}}
                     >保存并且获取作业卡</div>
                 </div>
+                {
+                    this.state.isNullContent ? <Modal
+                        onCancel={()=>this.setState({isNullContent:false})}
+                        onConfirm={()=>this.setState({isNullContent:false})}
+                    >标题和内容都不能为空</Modal> : null
+                }
                 {
                     this.state.isShowModal ?
                         <Modal

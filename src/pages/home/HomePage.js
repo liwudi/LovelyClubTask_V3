@@ -93,8 +93,12 @@ class HomePage extends Component{
         document.getElementById('subjectid').value = id;
         console.log(document.getElementById('subjectid'));
         console.log('执行jssdk');
-        initJssdk();
-        this.props.history.push(`/taskCard/${id}`);
+        let subjectid = id;
+        let subject = this.state.taskTitle;
+        let content = this.state.taskContent;
+        // initJssdk();
+        // this.props.history.push(`/taskCard/${id}`);
+        window.location.href=`./taskcard.jsp?subjectid=${subjectid}&subject=${subject}&content=${content}`
     }
     fetchMoreData(next){
 
