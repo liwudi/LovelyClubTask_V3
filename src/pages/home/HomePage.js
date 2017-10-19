@@ -16,7 +16,11 @@ import {
     ContentInput
 } from '../../actions/index';
 import { getTaskSubjectList,deleteTaskSubject } from '../../services/AppServices';
-import './css/HomePage.css'
+import './css/HomePage.css';
+
+import serverConfig from '../../config';
+const serviceUrl = serverConfig.server.main_url;
+
 class HomePage extends Component{
     constructor(props){
         super(props);
@@ -78,7 +82,7 @@ class HomePage extends Component{
 
         //处理作业的输入
         this.props.dispatch(ContentInput.contentInput(''));
-
+        
 
         this.props.history.push(`/setTaskPage/${false}`);
     }
@@ -88,17 +92,16 @@ class HomePage extends Component{
         //alert(id);
         this.props.history.push(`/taskDetail/${id}`)
     }
-    getCardEvent(id){
+    getCardEvent(id,this_subject,this_content){
         console.log('获取的id是'+id);
         document.getElementById('subjectid').value = id;
-        console.log(document.getElementById('subjectid'));
-        console.log('执行jssdk');
+
         let subjectid = id;
-        let subject = this.state.taskTitle;
-        let content = this.state.taskContent;
+        let subject = this_subject;
+        let content = this_content;
         // initJssdk();
         // this.props.history.push(`/taskCard/${id}`);
-        window.location.href=`./taskcard.jsp?subjectid=${subjectid}&subject=${subject}&content=${content}`
+        window.location.href=`${serviceUrl}/toIndex2.jsp?subjectid=${subjectid}&subject=${subject}&content=${content}`;
     }
     fetchMoreData(next){
 
@@ -161,7 +164,7 @@ class HomePage extends Component{
                                         <p className="note smallSize marginTop"><span className="colorRed">{item.submited || 0}</span>人已交作业</p>
                                     </div>
                                     <div className="functionLink disFx paddingTop paddingBottom" style={{backgroundColor:'#f9f9f9',color:"#999999"}}>
-                                        <p onClick={()=>{this.getCardEvent(item.id)}} className="fx1 center borderRight">获取作业卡</p>
+                                        <p onClick={()=>{this.getCardEvent(item.id,item.subject,item.content)}} className="fx1 center borderRight">获取作业卡</p>
                                         <p onClick={()=>{this.setState({isShowModal:true,editIndex:index})}} className="fx1 center">设置</p>
                                     </div>
                                 </div>

@@ -14,6 +14,11 @@ import { findTaskSubjectById,saveTaskSubject,updateTaskSubject } from '../../ser
 
 import { getuserInfo } from '../../getUserInfo';
 
+
+import serverConfig from '../../config';
+const serviceUrl = serverConfig.server.main_url;
+
+
 import {
     TYPES,
     TaskActions
@@ -39,18 +44,15 @@ class SetTaskPage extends Component{
     }
     getCardEvent(){
 
-        let id = this.props.taskStore.taskId;//这个是taskId，代表的编辑作业的taskSubjectId，代表的是布置作业的那个dispatch的负值
+        let id = Number(this.props.taskStore.taskId);//这个是taskId，代表的编辑作业的taskSubjectId，代表的是布置作业的那个dispatch的负值
         let userid = localStorage.getItem('userInfo') && JSON.parse(localStorage.getItem('userInfo')).openId || this.state.userInfo.openId;
         let subject = this.props.taskStore.taskTitle || this.state.taskTitle;
         let content = this.props.taskStore.taskContent || this.state.taskContent;
         let ids = this.props.taskStore.taskSubjectId || this.state.taskSubjectId;//这个
 
-
-        if(subject == 'undefined' || content == 'undefined'){
-            this.setState({
-                isNullContent: true
-            })
-        }else{
+        console.log('这个时候的subject',subject,content);
+        console.log('这个时候的content',content);
+        if(subject&&content){
             //更新作业题目，id是正值。
             //alert('this.isGetFromEdit()'+this.isGetFromEdit());
             this.isGetFromEdit() && updateTaskSubject(subject,content,id,userid).then(res => {
@@ -60,9 +62,20 @@ class SetTaskPage extends Component{
             //alert('id'+id);
             //布置作业题目获取作业卡，id是负值
             !this.isGetFromEdit() && saveTaskSubject(subject,content,userid,id).then(res => {
+                res = JSON.parse(res);
                 console.log('saveTaskSubject',res);
-                this.props.history.push(`/taskCard/{false}`);
+                //this.props.history.push(`/taskCard/{false}`);
+                let subjectid = id;
+                if(res.result.id){
+                    subjectid = res.result.id;
+                }
+
+                window.location.href=`${serviceUrl}/toIndex2.jsp?subjectid=${subjectid}&subject=${subject}&content=${content}`
             });
+        }else{
+            this.setState({
+                isNullContent: true
+            })
         }
 
     }
