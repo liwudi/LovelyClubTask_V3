@@ -22,6 +22,7 @@ import { findTaskSubjectById,saveTaskFinished,dloadVoice,dloadImg,task_dloadImg,
 import serverConfig from '../../config';
 const serviceUrl = serverConfig.server.main_url;
 
+
 class TaskContent extends Component{
     constructor(props){
         super(props);
@@ -46,6 +47,7 @@ class TaskContent extends Component{
         this.initTeacherEditData();
         this.initStudentsEditData();
         this.getUserInfo();
+        initJssdk();
     }
     initTeacherEditData(){
         let str = this.props.match.params.taskSubjectId;
